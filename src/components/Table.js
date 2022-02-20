@@ -5,6 +5,8 @@ import { ArrowDownIcon } from '@heroicons/react/solid';
 import ReactTooltip from "react-tooltip";
 import { Title } from "./";
 
+// TODO: possibly use this package for hover header issues 
+// yarn add @react-aria/interactions
 
 const Table = ({ headers, columns, body, uniqueKey, title }) => {
 

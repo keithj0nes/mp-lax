@@ -72,9 +72,9 @@ const Games = () => {
                 <div className="justify-between mb-3 sm:flex">
                     <Title>Games</Title>
 
-                    <div className="flex items-center">
-                        <p className="text-sm">Season: &nbsp;</p>
-                        <div className="w-full mb-6 sm:mb-0 sm:w-48">
+                    <div className="flex items-center mb-6 sm:mb-0 ">
+                        <p className="text-sm mr-2 mt-1">Season:</p>
+                        <div className="w-full sm:w-48">
                             <Select options={optionsExample} onChange={e => setSelectedSeason(e)} value={selectedSeason} />
                         </div>
                     </div>

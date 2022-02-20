@@ -17,7 +17,7 @@ const Select = ({ options, onChange, value }) => {
             <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 aria-expanded={dropdownOpen}
-                className={`${dropdownOpen ? 'z-50' : ''} bg-white relative mt-1 text-left rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400`}
+                className={`${dropdownOpen ? 'z-50' : ''} bg-white relative mt-1 text-left rounded form-input border border-gray-300 w-full px-3 py-2 sm:py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400`}
             >
                 {selectedValue.label || 'Select'}
                 <svg

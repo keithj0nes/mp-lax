@@ -14,3 +14,6 @@ export function variableStringFormatter(str, data) {
         return item;
     }).join('');
 }
+
+// eslint-disable-next-line no-promise-executor-return
+export const wait = t => new Promise(resolve => setTimeout(resolve, t));

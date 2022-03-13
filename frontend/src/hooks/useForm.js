@@ -1,4 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable guard-for-in */
 import { useEffect, useState } from 'react';
 
 export default function useForm(initialState = {}) {
@@ -11,12 +12,12 @@ export default function useForm(initialState = {}) {
     }, [initalValues]);
 
     const handleChange = (e, key) => {
-
         // if (!e.target) {
         //     console.log(e, 'eeeeeeeeee')
         // }
         // console.log(key, 'keeeyy')
-        let { value, name, type, files, checked } = e.target;
+        const { name, type, files, checked } = e.target;
+        let { value } = e.target;
 
         // console.log(type, name, checked, value, 'TYPEEEE')
 
@@ -32,13 +33,14 @@ export default function useForm(initialState = {}) {
         }
 
         if (key) {
-            return setFields({
+            setFields({
                 ...fields,
                 [key]: {
                     ...fields[key],
-                    [name]: {value: type === 'checkbox' ? checked : value },
-                }
+                    [name]: { value: type === 'checkbox' ? checked : value },
+                },
             });
+            return;
         }
 
         setFields({
@@ -84,7 +86,7 @@ export default function useForm(initialState = {}) {
         }
         setErrors(newErrors);
         return true;
-    }
+    };
 
     const resetForm = () => {
         setFields(initialState);
@@ -92,7 +94,7 @@ export default function useForm(initialState = {}) {
 
     const clearForm = () => {
         const clearedState = Object.fromEntries(
-            Object.entries(fields).map(([key, value]) => [key, '']),
+            Object.entries(fields).map(([key]) => [key, '']),
         );
         setFields(clearedState);
     };

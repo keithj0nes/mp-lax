@@ -14,10 +14,10 @@ export const request = async ({ url, method, session, publicRoute }) => {
         // },
     }).catch(err => {
         console.error(err, 'error in request');
-    })
+    });
 
-    console.log(rawResponse, 'Raw Response')
+    console.log(rawResponse, 'Raw Response');
     if (!rawResponse) return false;
 
     return rawResponse.data;
-}
+};

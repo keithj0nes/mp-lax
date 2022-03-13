@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Table, Title } from "../components";
+import React, { useState } from 'react';
+import { Table, Title } from '../components';
 
 const PLAYER = {
     first_name: 'Jerry',
@@ -8,7 +8,7 @@ const PLAYER = {
     positions: ['Attack', 'Middie'],
 
     career: {
-        games_played: 28, goals: 49, goals_per_game: 0.1, assists: 21, assists_per_game: 0, points: 70, points_per_game: 0.1
+        games_played: 28, goals: 49, goals_per_game: 0.1, assists: 21, assists_per_game: 0, points: 70, points_per_game: 0.1,
     },
     seasons: [
         { season_id: 1, name: '2020', games_played: 9, goals: 4, assists: 4, points: 8 },
@@ -21,8 +21,8 @@ const PLAYER = {
         { game_id: 42, date: '2/13', opponent: 'Marietta', goals: 8, assists: 1, points: 9 },
         { game_id: 72, date: '2/20', opponent: 'Alpharetta', goals: 2, assists: 2, points: 4 },
         { game_id: 73, date: '2/29', opponent: 'Cumming', goals: 2, assists: 3, points: 5 },
-    ]
-}
+    ],
+};
 
 const Player = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -43,7 +43,7 @@ const Player = () => {
         goals: 'number',
         assists: 'number',
         points: 'number',
-    }
+    };
 
     const currentSeasonHeaders = [
         { label: 'Date', alt: 'Date', default: true },
@@ -59,7 +59,7 @@ const Player = () => {
         goals: 'number',
         assists: 'number',
         points: 'number',
-    }
+    };
 
 
     return (
@@ -67,6 +67,7 @@ const Player = () => {
 
             <div className="flex justify-end">
                 <button
+                    type="button"
                     onClick={() => setIsEditing(!isEditing)}
                     className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue"
                 >
@@ -81,7 +82,10 @@ const Player = () => {
                             <div className="mb-2 w-full">
                                 <label htmlFor="first_name" className="text-sm text-gray-800">First Name</label>
                                 <input value={first_name} type="text" name="first_name" id="first_name" className="mt-2 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
-                                <p className={`pt-0.5 text-xs text-mpred transition duration-300 text-opacity-100`}>exmple of an error<span className="after:content-['.'] invisible"></span></p>
+                                <p className="pt-0.5 text-xs text-mpred transition duration-300 text-opacity-100">
+                                    exmple of an error
+                                    <span className="after:content-['.'] invisible" />
+                                </p>
                                 {/* <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.name}<span className="after:content-['.'] invisible"></span></p> */}
                             </div>
 
@@ -106,6 +110,7 @@ const Player = () => {
                     <div className="flex justify-end">
 
                         <button
+                            type="button"
                             onClick={() => setIsEditing(!isEditing)}
                             className="transition duration-300 border border-mpblue text-white py-1 px-3 bg-mpblue hover:text-mpblue hover:bg-transparent"
                         >
@@ -120,9 +125,7 @@ const Player = () => {
                 <>
                     <div className="bg-white p-3 sm:p-6 mb-3 sm:mb-6 shadow-sm">
                         <h2 className="text-2xl font-bold">{first_name} {last_name}</h2>
-                        <p className="text-sm">#{number} - {positions.map((pos, ind) => {
-                            return <span key={pos}>{pos} {ind + 1 !== positions.length && ' | '}</span>
-                        })}
+                        <p className="text-sm">#{number} - {positions.map((pos, ind) => <span key={pos}>{pos} {ind + 1 !== positions.length && ' | '}</span>)}
                         </p>
                     </div>
 
@@ -135,17 +138,15 @@ const Player = () => {
 
                         <div>
                             <p className="text-sm">
-                                {positions.map((pos, ind) => {
-                                    return <span key={pos}>{pos} {ind + 1 !== positions.length && ' | '}</span>
-                                })}
+                                {positions.map((pos, ind) => <span key={pos}>{pos} {ind + 1 !== positions.length && ' | '}</span>)}
                             </p>
 
                             <p className="text-sm text-right">Senior</p>
                         </div>
-                        
+
                     </div>
 
-                
+
                     <div className="bg-white p-3 sm:p-6 mb-6 shadow-sm">
                         <Table
                             headers={currentSeasonHeaders}
@@ -196,7 +197,7 @@ const Player = () => {
                 </>
             )}
         </main>
-    )
-}
+    );
+};
 
 export default Player;

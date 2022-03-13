@@ -241,7 +241,7 @@ const Table = ({ headers, columns, body, uniqueKey, title, disableSort, empty })
 export default Table;
 
 Table.propTypes = {
-    headers: PropTypes.object.isRequired,
+    headers: PropTypes.array.isRequired,
     columns: PropTypes.object.isRequired,
     body: PropTypes.array.isRequired,
     uniqueKey: PropTypes.string,
@@ -259,16 +259,16 @@ Table.defaultProps = {
 
 // TODO: fix linter below which correspondes with linter disable at top
 // eslint-disable-next-line no-undef
-TableSort.propTypes = {
-    label: PropTypes.string.isRequired,
-    sort: PropTypes.string,
-    className: PropTypes.string,
-    alt: PropTypes.string,
-};
+// TableSort.propTypes = {
+//     label: PropTypes.string.isRequired,
+//     sort: PropTypes.string,
+//     className: PropTypes.string,
+//     alt: PropTypes.string,
+// };
 
-// eslint-disable-next-line no-undef
-TableSort.defaultProps = {
-    sort: '',
-    className: '',
-    alt: '',
-};
+// // eslint-disable-next-line no-undef
+// TableSort.defaultProps = {
+//     sort: '',
+//     className: '',
+//     alt: '',
+// };

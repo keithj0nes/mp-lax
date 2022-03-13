@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Table, Title, Modal, Loader, QuickAddPlayersToGame } from "./";
-import { useForm } from "../hooks";
-import { EditPlayerStatsModal, AddPlayerGameStatsModal } from "./modals";
+// /* eslint-disable  */
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { Table, Title, Modal, Loader } from '.';
+import { useForm } from '../hooks';
+import { EditPlayerStatsModal, AddPlayerGameStatsModal } from './modals';
 import { updateGame } from '../redux/slices/gamesSlice';
 
 // const initialState = {
@@ -16,18 +18,15 @@ import { updateGame } from '../redux/slices/gamesSlice';
 // }
 
 const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
-    const { game, players, isLoading } = useSelector(state => ({ ...state.games,  ...state.players }));
+    const { game, players, isLoading } = useSelector(state => ({ ...state.games, ...state.players }));
     const [showEditPlayerStatsModal, setShowEditPlayerStatsModal] = useState(false);
     const [showAddPlayerStatsModal, setShowAddPlayerStatsModal] = useState(false);
     const [_playerHeaders, _setPlayerHeaders] = useState(playerHeaders);
     const [_playerColumns, _setPlayerColumns] = useState(playerColumns);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
-    const { fields, handleChange, errors, validate } = useForm(game);
+    const { fields, handleChange } = useForm(game);
     const dispatch = useDispatch();
 
-
-    // console.log(fields, 'eidt game fils')
-    // console.log(game, 'game')
 
     useEffect(() => {
         _setPlayerHeaders([...playerHeaders, { label: '' }]);
@@ -36,25 +35,19 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
             edit: {
                 type: 'button',
                 func: (e) => {
-                    setShowEditPlayerStatsModal(true)
-                    setSelectedPlayer(e)
+                    setShowEditPlayerStatsModal(true);
+                    setSelectedPlayer(e);
                 },
                 as: 'Edit',
-                className: 'w-0 whitespace-nowrap'
-            }
-        })
-    }, [])
+                className: 'w-0 whitespace-nowrap',
+            },
+        });
+    }, []);
 
-    const { opponent, location, player_stats } = game;
-
-
-    // console.log(fields, 'fields')
-
+    const { opponent, player_stats } = game;
     const usScoreTotal = fields.us_scores_first + fields.us_scores_second + fields.us_scores_third + fields.us_scores_fourth + fields.us_scores_overtime;
-    
-    const goalsAccountedFor = player_stats.reduce((acc, tot) => {
-        return acc += tot.goals
-    }, 0)
+    // eslint-disable-next-line no-param-reassign
+    const goalsAccountedFor = player_stats.reduce((acc, tot) => acc += tot.goals, 0);
 
     // console.log(goalsAccountedFor, 'goalsAccountedFor')
     //   console.log(usScoreTotal - goalsAccountedFor)
@@ -63,18 +56,17 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
         if (goalsAccountedFor !== usScoreTotal) {
             return (
                 <p className="text-sm text-mpred">WARNING: There {usScoreTotal - goalsAccountedFor === 1 ? 'is' : 'are'} {usScoreTotal - goalsAccountedFor} {usScoreTotal - goalsAccountedFor === 1 ? 'goal' : 'goals'} not accounted for in the player stats below</p>
-            )
+            );
         }
 
         if (!usScoreTotal) {
             return (
                 <p className="text-sm text-mpred">Add scores to assign goals to players</p>
-            )
+            );
         }
 
         return null;
-    }
-    
+    };
 
     return (
         <>
@@ -109,7 +101,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                     <table className="m-auto md:m-0 mb-5">
                         <thead>
                             <tr>
-                                <th></th>
+                                <th> </th>
                                 <th className="py-1 px-3 border-r">Quarter 1</th>
                                 <th className="py-1 px-3 border-r">Quarter 2</th>
                                 <th className="py-1 px-3 border-r">Quarter 3</th>
@@ -157,7 +149,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                                 </td>
 
                                 <td className="text-center">
-                                    <p>{fields.opponent_scores_first + fields.opponent_scores_second + fields.opponent_scores_third + fields.opponent_scores_fourth }</p>
+                                    <p>{fields.opponent_scores_first + fields.opponent_scores_second + fields.opponent_scores_third + fields.opponent_scores_fourth}</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -175,7 +167,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                     <table className="m-auto md:m-0 mb-5">
                         <thead>
                             <tr>
-                                <th></th>
+                                <th> </th>
                                 {/* <th className="py-1 px-3 border-r">Goals</th> */}
                                 <th className="py-1 px-3 border-r">Ground Balls</th>
                                 <th className="py-1 px-3 border-r">Shots</th>
@@ -187,7 +179,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                         <tbody>
                             <tr>
                                 <td className="p-1 mx-2 pr-6">Patriots</td>
-                                <td className="text-sm text-gray-800 text-center" colSpan={"100%"}>Our stats are calculated by player scoring inputs below</td>
+                                <td className="text-sm text-gray-800 text-center" colSpan="100%">Our stats are calculated by player scoring inputs below</td>
                             </tr>
 
                             <tr>
@@ -211,7 +203,6 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                         </tbody>
                     </table>
                 </div>
-                
             </div>
 
             <div className="bg-white p-3 sm:p-6 mb-3 sm:mb-6 shadow-sm">
@@ -230,6 +221,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                 />
                 <div className="flex items-center mt-6 mb-4 ">
                     <button
+                        type="button"
                         onClick={() => setShowAddPlayerStatsModal(!showAddPlayerStatsModal)}
                         className="transition duration-300 border-mpblue text-mpblue py-1 px-3 hover:text-white hover:bg-mpblue disabled:bg-mpblue disabled:text-white disabled:opacity-30"
                         disabled={players?.length <= game.player_stats?.length}
@@ -249,6 +241,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                 <Title>Goalie Stats - Edit</Title>
                 <div className="flex">
                     <button
+                        type="button"
                         onClick={() => setIsEditing(false)}
                         // className="transition duration-300  border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue"
                         className="transition duration-300 border-mpblue text-mpblue py-1 px-3 hover:text-white hover:bg-mpblue disabled:bg-mpblue disabled:text-white disabled:opacity-30"
@@ -259,7 +252,6 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                 </div>
 
             </div>
-
 
 
             {/* <div className="flex justify-end"> */}
@@ -275,9 +267,10 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                 </button>
 
                 <button
+                    type="button"
                     onClick={async () => {
-                        const b = await dispatch(updateGame(fields))
-                        if (!!b) return setIsEditing(false)
+                        const b = await dispatch(updateGame(fields));
+                        if (!!b) setIsEditing(false);
                     }}
                     className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 hover:text-white hover:bg-mpblue"
                     // className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 bg-mpblue hover:text-mpblue hover:bg-transparent"
@@ -304,7 +297,13 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                     </button>
                 </div> */}
         </>
-    )
-}
+    );
+};
 
 export default EditGame;
+
+EditGame.propTypes = {
+    setIsEditing: PropTypes.func.isRequired,
+    playerHeaders: PropTypes.array.isRequired,
+    playerColumns: PropTypes.object.isRequired,
+};

@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { Table, Title, Modal, Loader, QuickAddPlayersToGame, EditGame } from "../components";
-// import { EditPlayerStatsModal, AddPlayerGameStatsModal } from "../components/modals";
-import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { format, parseISO } from 'date-fns' 
-import { getGameById, quickAddPlayersToGame, clearGameByIdR } from '../redux/slices/gamesSlice';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
+import { format, parseISO } from 'date-fns';
+import { getGameById, clearGameByIdR } from '../redux/slices/gamesSlice';
+import { Table, Title, Loader, QuickAddPlayersToGame, EditGame } from '../components';
 
-import classNames from "classnames";
 
 const GAME = {
     opponent: 'Alpharetta HS',
@@ -23,7 +22,7 @@ const GAME = {
         ground_balls: { us: 10, opponent: 16 },
         shots: { us: 24, opponent: 22 },
         faceoffs_won: { us: 20, opponent: 11 },
-        penalties_in_minutes: { us: 2.5, opponent: 5 }
+        penalties_in_minutes: { us: 2.5, opponent: 5 },
     },
     // player_stats: [
     //     { id: 1, first_name: 'John', last_name: 'Hicks', number: 22, graduation_year: 2024, goals: 3, assists: 1, points: 4 },
@@ -38,9 +37,8 @@ const GAME = {
     goalie_stats: [
         { id: 12, first_name: 'Matthew', last_name: 'Davidson', player_number: 5, graduation_year: 2022, minutes: 48, shots_on_goal: 22, saves: 11, save_percentage: 0.5, goals_against: 11, goals_against_percentage: 0.5 },
         // { id: 24, first_name: 'Aiden', last_name: 'Carlock', number: 24, graduation_year: 2024, goals: 3, assists: 2, points: 5 },
-    ]
-}
-
+    ],
+};
 
 
 // save percentage calc = saves / shots on goal
@@ -55,28 +53,27 @@ const Game = () => {
 
     // const { game } = useSelector(state => state.games);
 
-    const { game, players, singleGameLoading } = useSelector(state => ({ ...state.games,  ...state.players }));
+    const { game, singleGameLoading } = useSelector(state => ({ ...state.games, ...state.players }));
 
-    console.log(game, ' SINGGLE GAMEE =====')
+    console.log(game, ' SINGGLE GAMEE =====');
 
     // console.log(singleGameLoading, 'singleGameLoading')
 
     useEffect(() => {
-        dispatch(getGameById(params.game_id))
+        dispatch(getGameById(params.game_id));
 
         return () => {
-            dispatch(clearGameByIdR())
-        }
-    }, [dispatch, params.game_id])
+            dispatch(clearGameByIdR());
+        };
+    }, [dispatch, params.game_id]);
 
     const { goalie_stats } = GAME;
 
     const { has_been_played, opponent, location, start_date, player_stats } = game;
 
 
-
-    const usScores = Object.keys(game).filter(ele => ele.startsWith('us_') && ele.includes('_scores_') && !ele.includes('_scores_overtime') );
-    const opponentScores = Object.keys(game).filter(ele => ele.startsWith('opponent_') && ele.includes('_scores_') && !ele.includes('_scores_overtime') );
+    const usScores = Object.keys(game).filter(ele => ele.startsWith('us_') && ele.includes('_scores_') && !ele.includes('_scores_overtime'));
+    const opponentScores = Object.keys(game).filter(ele => ele.startsWith('opponent_') && ele.includes('_scores_') && !ele.includes('_scores_overtime'));
 
     const playerHeaders = [
         { label: '#', sort: 'player_number', className: 'whitespace-nowrap w-0', default: true },
@@ -96,7 +93,7 @@ const Game = () => {
             type: 'link',
             format: '/players/$id',
             as: '$first_name $last_name',
-            className: 'whitespace-nowrap'
+            className: 'whitespace-nowrap',
         },
         goals: 'number',
         assists: 'number',
@@ -105,12 +102,12 @@ const Game = () => {
         // currenty if sorting by points, will error out
         points: {
             type: 'math',
-            format: `$goals + $assists`
+            format: '$goals + $assists',
         },
         sog: 'number',
         ground_balls: 'number',
         penalties_in_minutes: 'number',
-    }
+    };
 
 
     const goalieHeaders = [
@@ -131,7 +128,7 @@ const Game = () => {
             type: 'link',
             format: '/players/$id',
             as: '$first_name $last_name',
-            className: 'whitespace-nowrap'
+            className: 'whitespace-nowrap',
         },
         shots_on_goal: 'number',
         saves: 'number',
@@ -139,7 +136,7 @@ const Game = () => {
         goals_against: 'number',
         goals_against_percentage: 'number',
         minutes: 'number',
-    }
+    };
 
     // const handleCheckboxChange = player => {
     //     const checkedPlayersInGameCopy = [...checkedPlayersInGame];
@@ -153,29 +150,29 @@ const Game = () => {
     // };
 
     // console.log(player_stats, 'player_stats')
-// console.log(players, 'pLAAYERZZZ ==22')
+    // console.log(players, 'pLAAYERZZZ ==22')
 
     const renderWhenEditing = () => {
         if (isEditing && !player_stats?.length) {
-            return <QuickAddPlayersToGame setIsEditing={setIsEditing} isEditing={isEditing} />
+            return <QuickAddPlayersToGame setIsEditing={setIsEditing} isEditing={isEditing} />;
         }
         if (isEditing && game.has_been_played) {
-            return <EditGame setIsEditing={setIsEditing} isEditing={isEditing} playerColumns={playerColumns} playerHeaders={playerHeaders} />
+            return <EditGame setIsEditing={setIsEditing} isEditing={isEditing} playerColumns={playerColumns} playerHeaders={playerHeaders} />;
         }
         return null;
-    }
+    };
 
     return (
         <main className="py-6">
-
             <Loader loading={singleGameLoading} />
 
             <div className="flex justify-end">
                 <button
+                    type="button"
                     onClick={() => setIsEditing(!isEditing)}
                     // className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue"
-                    className={classNames("transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue", {
-                        "hidden" : isEditing
+                    className={classNames('transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue', {
+                        'hidden': isEditing,
                     })}
                 >
                     Edit Game
@@ -187,8 +184,8 @@ const Game = () => {
                     type="button"
                     onClick={() => setIsEditing(false)}
                     // className="transition duration-300 text-mpblue py-1 px-3 mb-4 hover:text-mpblue hover:bg-transparent"
-                    className={classNames("transition duration-300 text-mpblue py-1 px-3 mb-4 hover:text-mpblue hover:bg-transparent", {
-                        "hidden" : !isEditing
+                    className={classNames('transition duration-300 text-mpblue py-1 px-3 mb-4 hover:text-mpblue hover:bg-transparent', {
+                        'hidden': !isEditing,
                     })}
                 >
                     Go Back
@@ -205,9 +202,9 @@ const Game = () => {
                             <h3 className="text-3xl">{opponent}</h3>
                             <h4 className="text-sm">{location}</h4>
                             {/* <h4 className="text-sm">{start_date}</h4> */}
-                            <h4 className="text-sm">{start_date && format(parseISO(start_date), "PPPP @ pp")}</h4>
+                            <h4 className="text-sm">{start_date && format(parseISO(start_date), 'PPPP @ pp')}</h4>
 
-                            
+
                         </div>
 
                         {has_been_played && (
@@ -215,7 +212,7 @@ const Game = () => {
                                 <table className="m-auto md:m-0">
                                     <thead>
                                         <tr>
-                                            <th></th>
+                                            <th> </th>
                                             <th>1</th>
                                             <th>2</th>
                                             <th>3</th>
@@ -227,16 +224,12 @@ const Game = () => {
                                     <tbody>
                                         <tr>
                                             <td className="pr-4 border-b border-gray-200 whitespace-nowrap">Patriots</td>
-                                            {usScores.map((score, ind) => {
-                                                return <td key={score} className="px-3 md:px-6 py-1 border border-gray-200">{game[score]}</td>
-                                            })}
+                                            {usScores.map((score) => <td key={score} className="px-3 md:px-6 py-1 border border-gray-200">{game[score]}</td>)}
                                             <td className="px-3 md:px-6 py-1 border border-gray-200">{game.goals_for}</td>
                                         </tr>
                                         <tr>
                                             <td className="pr-4 whitespace-nowrap">{opponent}</td>
-                                            {opponentScores.map((score, ind) => {
-                                                return <td key={score} className="px-3 md:px-6 py-1 border border-gray-200">{game[score]}</td>
-                                            })}
+                                            {opponentScores.map((score) => <td key={score} className="px-3 md:px-6 py-1 border border-gray-200">{game[score]}</td>)}
                                             <td className="px-3 md:px-6 py-1 border border-gray-200">{game.goals_against}</td>
                                         </tr>
                                     </tbody>
@@ -245,19 +238,19 @@ const Game = () => {
                         )}
 
                     </div>
-                
+
                     {!has_been_played ? (
                         <div className="bg-white p-3 sm:p-6 mb-6 shadow-sm overflow-scroll">
                             <p className="text-center">Game stats are not yet available</p>
                         </div>
-                    ): (
+                    ) : (
                         <>
                             <div className="bg-white p-3 sm:p-6 mb-6 shadow-sm overflow-scroll">
                                 <Title>Team Stats</Title>
                                 <table className="">
                                     <thead>
                                         <tr>
-                                            <th></th>
+                                            <th> </th>
                                             <th className="pb-1 text-xs font-normal">G</th>
                                             <th className="pb-1 text-xs font-normal">GB</th>
                                             <th className="pb-1 text-xs font-normal">SH</th>
@@ -265,14 +258,14 @@ const Game = () => {
                                             <th className="pb-1 text-xs font-normal">PIM</th>
                                         </tr>
                                     </thead>
-        
+
                                     <tbody>
                                         <tr className="border-b border-mpred">
                                             <td className="md:pr-4 whitespace-nowrap w-full border-r border-mpred md:w-auto">Patriots</td>
                                             {/* {Object.keys(team_stats).map(item => {
                                                 return <td key={item} className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{team_stats[item].us}</td>
                                             })} */}
-        
+
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_goals_for}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_ground_balls}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_shots}</td>
@@ -284,7 +277,7 @@ const Game = () => {
                                             {/* {Object.keys(team_stats).map(item => {
                                                 return <td key={item} className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{team_stats[item].opponent}</td>
                                             })} */}
-        
+
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.opponent_goals_for}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.opponent_ground_balls}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.opponent_shots}</td>
@@ -293,9 +286,9 @@ const Game = () => {
                                         </tr>
                                     </tbody>
                                 </table>
-        
-                            </div> 
-        
+
+                            </div>
+
                             <div className="bg-white p-3 sm:p-6 mb-6 shadow-sm overflow-scroll">
                                 <Table
                                     headers={playerHeaders}
@@ -305,7 +298,7 @@ const Game = () => {
                                     empty="No player stats available"
                                 />
                             </div>
-        
+
                             <div className="bg-white p-3 sm:p-6 mb-6 shadow-sm overflow-scroll">
                                 <Table
                                     headers={goalieHeaders}
@@ -320,15 +313,10 @@ const Game = () => {
                 </>
             )}
         </main>
-    )
-}
+    );
+};
 
 export default Game;
-
-
-
-
-
 
 
 // TODO: figure out for mobile later

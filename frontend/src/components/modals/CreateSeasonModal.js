@@ -1,11 +1,13 @@
 // import toRegexRange from 'to-regex-range';
-import { getDatabase, ref, push } from "firebase/database";
+import React from 'react';
+import PropTypes from 'prop-types';
+
 // import { customAlphabet } from 'nanoid'
-import { useForm } from "../../hooks";
+import { useForm } from '../../hooks';
 
 const initialState = {
     season_name: '',
-}
+};
 
 const validations = {
     season_name: {
@@ -14,7 +16,7 @@ const validations = {
             message: 'Season name is required',
         },
     },
-}
+};
 
 
 const CreateSeasonModal = ({ closeModal }) => {
@@ -23,28 +25,18 @@ const CreateSeasonModal = ({ closeModal }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isValidated = validate(validations)
+        const isValidated = validate(validations);
         // console.log(isValidated, 'isValidated')
         // console.log(fields, 'fields!!!!!')
         // console.log(errors, 'errors!!!!!')
 
-        if (!isValidated) return;
+        // const { season_name } = fields;
 
-        writeSeasonData();
-    }
-
-    const writeSeasonData = (userId, name, email, imageUrl) => {
-        const db = getDatabase();
-        const { season_name } = fields;
-
-        push(ref(db, 'seasons/'), {
-            season_name,
-            is_active: false,
-            created_at: new Date(),
-        });
-
-        closeModal();
-    }
+        console.log(isValidated, 'is valideateD!');
+        // TODO: create ednpoint
+        // is_active: false,
+        // created_at: new Date(),
+    };
 
     return (
         <div>
@@ -60,8 +52,8 @@ const CreateSeasonModal = ({ closeModal }) => {
 
                     <div className="mb-2">
                         <label htmlFor="season_name" className="text-sm text-gray-800">Season Name</label>
-                        <input value={fields.season_name} onChange={handleChange}  type="text" name="season_name" id="season_name" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
-                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.season_name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.season_name}<span className="after:content-['.'] invisible"></span></p>
+                        <input value={fields.season_name} onChange={handleChange} type="text" name="season_name" id="season_name" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.season_name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.season_name}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
                     {/* <div className="mb-2">
@@ -94,7 +86,11 @@ const CreateSeasonModal = ({ closeModal }) => {
                 </div>
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default CreateSeasonModal
+export default CreateSeasonModal;
+
+CreateSeasonModal.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+};

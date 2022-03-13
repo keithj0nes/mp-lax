@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { ArrowDownIcon } from "@heroicons/react/solid";
-import { Modal } from "../components";
-import { CreateSeasonModal, EditSeasonModal } from "../components/modals";
+import React, { useState } from 'react';
+import { ArrowDownIcon } from '@heroicons/react/solid';
+import { Modal } from '../components';
+import { CreateSeasonModal, EditSeasonModal } from '../components/modals';
 
 const Home = () => {
     const [showCreateSeasonModal, setShowCreateSeasonModal] = useState(false);
@@ -19,6 +19,7 @@ const Home = () => {
                     View Seasons
                 </button>
                 <button
+                    type="button"
                     onClick={() => setShowCreateSeasonModal(true)}
                     className="transition duration-300 border border-mpblue text-mpblue py-1 px-3  hover:text-white hover:bg-mpblue"
                 >
@@ -41,7 +42,7 @@ const Home = () => {
                 {(closeModal) => <EditSeasonModal closeModal={closeModal} />}
             </Modal>
         </main>
-    )
-}
+    );
+};
 
 export default Home;

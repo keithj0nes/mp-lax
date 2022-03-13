@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
-import { getDatabase, ref, onValue} from "firebase/database";
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { getDatabase, ref, onValue } from 'firebase/database';
 
 const EditSeasonModal = ({ closeModal }) => {
     const [state, setState] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    
+
     useEffect(() => {
         const db = getDatabase();
         // console.log(db,' dbbbb')
         const starCountRef = ref(db, 'seasons');
-        console.log(starCountRef, 'starcoutn')
+        console.log(starCountRef, 'starcoutn');
         onValue(starCountRef, (snapshot) => {
             const data = snapshot.val();
-            console.log(data, 'data')
+            console.log(data, 'data');
             // updateStarCount(postElement, data);
             setState(data);
         });
-
-    }, [])
+    }, []);
 
     return (
         <div>
@@ -35,9 +35,9 @@ const EditSeasonModal = ({ closeModal }) => {
                                     <h3>{data.season_name}</h3>
                                     <p className="text-sm">{data.is_active ? <span className="text-green-400">Active</span> : <span className="text-red-400">Not active</span> }</p>
                                 </div>
-                                <button onClick={() => setIsEditing(true)}>Edit</button>
+                                <button type="button" onClick={() => setIsEditing(true)}>Edit</button>
                             </div>
-                        )
+                        );
                     })}
                 </div>
                 <div className="px-4 pb-4 pt-3 border-t border-gray-300 flex justify-end">
@@ -58,7 +58,11 @@ const EditSeasonModal = ({ closeModal }) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default EditSeasonModal;
+
+EditSeasonModal.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+};

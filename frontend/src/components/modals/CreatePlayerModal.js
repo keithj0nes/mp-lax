@@ -1,8 +1,10 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import toRegexRange from 'to-regex-range';
 // import { getDatabase, ref, set } from "firebase/database";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 // import { customAlphabet } from 'nanoid'
-import { useForm } from "../../hooks";
+import { useForm } from '../../hooks';
 // import { request } from '../../request';
 import { createPlayer } from '../../redux/slices/playersSlice';
 
@@ -15,7 +17,7 @@ const initialState = {
     last_name: '',
     graduation_year: '',
     add_to_current_season: true,
-}
+};
 
 const validations = {
     first_name: {
@@ -39,8 +41,8 @@ const validations = {
             value: validYearsRegex,
             message: `Year must be between ${validFromYear} and ${validToYear}`,
         },
-    }
-}
+    },
+};
 
 const CreatePlayerModal = ({ closeModal }) => {
     const { fields, handleChange, errors, validate } = useForm(initialState);
@@ -48,7 +50,7 @@ const CreatePlayerModal = ({ closeModal }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isValidated = validate(validations)
+        const isValidated = validate(validations);
         // console.log(isValidated, 'isValidated')
         // console.log(fields, 'fields!!!!!')
         // console.log(errors, 'errors!!!!!')
@@ -56,35 +58,9 @@ const CreatePlayerModal = ({ closeModal }) => {
         if (!isValidated) return;
 
         // console.log('SUBMIT FUNCTION HERE!!!')
-        writeUserData();
-    }
-
-    const writeUserData = async (userId, name, email, imageUrl) => {
-        // const alphabet = '123456789';
-        // const nanoid = customAlphabet(alphabet, 6);
-        // const db = getDatabase();
-
-        // const { first_name, last_name, graduation_year } = fields;
-
-        // set(ref(db, 'players/' + nanoid()), {
-        //     first_name,
-        //     last_name,
-        //     graduation_year,
-        // });
-
         dispatch(createPlayer(fields));
-
-        // const b = await request({ method: 'POST', url: '/api/players/', session: {
-        //     first_name,
-        //     last_name,
-        //     graduation_year,
-        // }})
-
-        // console.log(b, 'bbbbb')
-
-
         closeModal();
-    }
+    };
 
     return (
         <div className="bg-red-10">
@@ -100,20 +76,20 @@ const CreatePlayerModal = ({ closeModal }) => {
 
                     <div className="mb-2">
                         <label htmlFor="first_name" className="text-sm text-gray-800">First Name</label>
-                        <input value={fields.first_name} onChange={handleChange}  type="text" name="first_name" id="first_name" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
-                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.first_name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.first_name}<span className="after:content-['.'] invisible"></span></p>
+                        <input value={fields.first_name} onChange={handleChange} type="text" name="first_name" id="first_name" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.first_name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.first_name}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
                     <div className="mb-2">
                         <label htmlFor="last_name" className="text-sm text-gray-800">Last Name</label>
                         <input value={fields.last_name} onChange={handleChange} type="text" name="last_name" id="last_name" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
-                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.last_name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.last_name}<span className="after:content-['.'] invisible"></span></p>
+                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.last_name ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.last_name}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
                     <div className="mb-2">
                         <label htmlFor="graduation_year" className="text-sm text-gray-800">Graduation Year</label>
                         <input value={fields.graduation_year} onChange={handleChange} type="number" maxLength={4} name="graduation_year" id="graduation_year" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
-                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.graduation_year ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.graduation_year}<span className="after:content-['.'] invisible"></span></p>
+                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.graduation_year ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.graduation_year}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
                     <div className="mb-1">
@@ -121,7 +97,7 @@ const CreatePlayerModal = ({ closeModal }) => {
                             <label htmlFor="is_home" className="text-sm text-gray-800">Add Player to Current Season</label>
                             <input checked={fields.add_to_current_season} onChange={handleChange} type="checkbox" maxLength={4} name="add_to_current_season" id="add_to_current_season" className="mt-1 rounded form-input border border-gray-300 px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
                         </div>
-                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.add_to_current_season ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.add_to_current_season}<span className="after:content-['.'] invisible"></span></p>
+                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.add_to_current_season ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.add_to_current_season}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
                 </div>
@@ -143,7 +119,11 @@ const CreatePlayerModal = ({ closeModal }) => {
                 </div>
             </form>
         </div>
-    )
-}
+    );
+};
 
 export default CreatePlayerModal;
+
+CreatePlayerModal.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+};

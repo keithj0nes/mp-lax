@@ -26,6 +26,8 @@ module.exports = {
         'max-len': 'off',
         'no-return-assign': 'off',
         'no-console': 'off',
+        // 'no-console': ['error', { allow: ['warn', 'error'] }],
+        'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],
         'object-curly-newline': 'off',
         'arrow-parens': 'off',
         'camelcase': 'off',
@@ -39,5 +41,6 @@ module.exports = {
         'react/function-component-definition': 'off',
         'react/jsx-filename-extension': 'off',
         'react/forbid-prop-types': 'off',
+        'react/jsx-one-expression-per-line': 'off',
     },
 };

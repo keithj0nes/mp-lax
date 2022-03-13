@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import dateFormat from 'date-fns/format';
-import { format, parseISO } from 'date-fns' 
-import { Table , Select, Title, Modal } from "../components";
-import { CreateGameModal } from "../components/modals";
+// import dateFormat from 'date-fns/format';
+import { format, parseISO } from 'date-fns';
+import { Table, Select, Title, Modal } from '../components';
+import { CreateGameModal } from '../components/modals';
 
-import { getAllGames } from "../redux/slices/gamesSlice";
+import { getAllGames } from '../redux/slices/gamesSlice';
 
 // const GAMES = [
 //     { id: 1, home: true, opponent: 'Sequoia', date: '2/10/22', has_been_played: true, location: '', notes: 'notes about game', goals_for: 9, goals_against: 7, goal_differential: '+2' },
@@ -20,16 +20,16 @@ const Games = () => {
     const [showCreateGameModal, setShowCreateGameModal] = useState(false);
     const [selectedSeason, setSelectedSeason] = useState({ value: 525, label: '2022 - [current]' });
     const dispatch = useDispatch();
-    const { games, isLoading } = useSelector(state => state.games)
+    const { games, isLoading } = useSelector(state => state.games);
 
     // console.log(games,' GAMMMEEESSS')
 
     useEffect(() => {
-        dispatch(getAllGames())
-    }, [dispatch])
+        dispatch(getAllGames());
+    }, [dispatch]);
 
     // const formattedGames = GAMES.map(item => {
-    //     return { 
+    //     return {
     //         ...item,
     //         opponent: `${item.home ? 'vs' : '@'} ${item.opponent}`,
     //         goal_differential: `${!item.has_been_played ? 'Not Yet Played' : item.goal_differential}`
@@ -69,33 +69,19 @@ const Games = () => {
         { value: 52534, label: '2020' },
         { value: 2352, label: '2019' },
         { value: 3423, label: '2018' },
-    ]
+    ];
     // start_date: [d.date, d.start_time] = dateFormat(d.start_date, 'MM/DD/YY h:mmA').split(' ')
 
 
-    const formattedGames2 = games.map(item => {
-        // let result = '';
-
-        // if (!!item.goal_differential) {
-        //     console.log(Math.sign(item.goal_differential), 'item.goal_differential')
-        //     if (item.goal_differential === 0) {
-        //         result = 'T';
-        //     } else if (item.goal_differential > 0) {
-        //         result = 'W'
-        //     } else {
-        //         result = 'L'
-        //     }
-        // }
-        return { 
-            ...item,
-            opponent: `${item.is_home ? 'vs' : '@'} ${item.opponent}`,
-            // goal_differential: `${!item.has_been_played ? 'Not Yet Played' : item.goal_differential}`,
-            goal_differential: item.goal_differential > 0 ? `+${item.goal_differential}` : item.goal_differential,
-            // start_date: dateFormat(item.start_date, 'MM/DD/YY')
-            start_date: format(parseISO(item.start_date), "M/dd/yy"),
-            // result,
-        }
-    })
+    const formattedGames2 = games.map(item => ({
+        ...item,
+        opponent: `${item.is_home ? 'vs' : '@'} ${item.opponent}`,
+        // goal_differential: `${!item.has_been_played ? 'Not Yet Played' : item.goal_differential}`,
+        goal_differential: item.goal_differential > 0 ? `+${item.goal_differential}` : item.goal_differential,
+        // start_date: dateFormat(item.start_date, 'MM/DD/YY')
+        start_date: format(parseISO(item.start_date), 'M/dd/yy'),
+        // result,
+    }));
 
     // console.log(formattedGames2, 'formattedGames2')
 
@@ -118,7 +104,7 @@ const Games = () => {
             as: '$opponent',
             className: 'whitespace-nowrap',
         },
-        result: 'string', 
+        result: 'string',
         goals_for: 'number',
         goals_against: 'number',
         goal_differential: 'number',
@@ -127,12 +113,7 @@ const Games = () => {
         //     className: 'whitespace-nowrap'
         // },
 
-    }
-
-
-
-
-
+    };
 
     return (
         <main className="py-6">
@@ -151,6 +132,7 @@ const Games = () => {
 
             <div className="flex justify-end">
                 <button
+                    type="button"
                     onClick={() => setShowCreateGameModal(true)}
                     className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue"
                 >
@@ -200,7 +182,7 @@ const Games = () => {
                 />
             </div>
         </main>
-    )
-}
+    );
+};
 
 export default Games;

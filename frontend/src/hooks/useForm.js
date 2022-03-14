@@ -11,10 +11,20 @@ export default function useForm(initialState = {}) {
         setFields(initialState);
     }, [initalValues]);
 
-    const handleChange = (e, key) => {
+    const handleChange = (e, key, nameManual) => {
         // if (!e.target) {
-        //     console.log(e, 'eeeeeeeeee')
+        // console.log(e, 'eeeeeeeeee')
         // }
+
+        if (nameManual) {
+            // return console.log(nameManual, key);
+            setFields({
+                ...fields,
+                [nameManual]: key.toString(),
+            });
+            return;
+        }
+
         // console.log(key, 'keeeyy')
         const { name, type, files, checked } = e.target;
         let { value } = e.target;
@@ -23,10 +33,24 @@ export default function useForm(initialState = {}) {
 
         if (type === 'number') {
             // use maxLength on type: number
-            if (e.target.attributes?.maxlength) {
+            // console.log(value, e.target.attributes?.max.value, 'ma value')
+            // console.log(typeof e.target.attributes?.max.value, 'ma value')
+
+            if (e.target.attributes?.max) {
+                if (value > parseFloat(e.target.attributes?.max.value)) {
+                    value = parseFloat(e.target.attributes?.max.value);
+                }
+                value = parseFloat(value);
+            } else if (e.target.attributes?.maxlength) {
                 if (value.length > e.target.attributes?.maxlength.value) return;
+                value = parseFloat(value);
+            } else {
+                value = parseFloat(value);
             }
-            value = parseFloat(value);
+
+            if (Number.isNaN(value)) {
+                value = 0;
+            }
         }
         if (type === 'file') {
             [value] = files;

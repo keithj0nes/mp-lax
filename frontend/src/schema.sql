@@ -32,41 +32,41 @@ DROP TABLE IF EXISTS settings CASCADE;
 --==--==--==--==--==--    Create Tables    --==--==--==--==--==--
 --==--==--==--==--==--==--==--==-==--==--==--==--==--==--==--==--
 
-CREATE TABLE "users" (
-  "id" SERIAL PRIMARY KEY,
-  "user_id" INTEGER, -- ????? should i do this?
-  "first_name" VARCHAR,
-  "last_name" VARCHAR,
-  "email" VARCHAR,
-  "admin_type" VARCHAR,
-  "is_suspended" BOOLEAN NOT NULL DEFAULT false,
-  "suspended_at" TIMESTAMP,
-  "invite_token" VARCHAR,
-  "invite_date" TIMESTAMP,
-  "reinvite_date" TIMESTAMP,
-  "last_login" TIMESTAMP,
-  "created_at" TIMESTAMP,
-  "created_by" INTEGER      -- REFERENCES users(id)
-);
+-- CREATE TABLE "users" (
+--   "id" SERIAL PRIMARY KEY,
+--   "user_id" INTEGER, -- ????? should i do this?
+--   "first_name" VARCHAR,
+--   "last_name" VARCHAR,
+--   "email" VARCHAR,
+--   "admin_type" VARCHAR,
+--   "is_suspended" BOOLEAN NOT NULL DEFAULT false,
+--   "suspended_at" TIMESTAMP,
+--   "invite_token" VARCHAR,
+--   "invite_date" TIMESTAMP,
+--   "reinvite_date" TIMESTAMP,
+--   "last_login" TIMESTAMP,
+--   "created_at" TIMESTAMP,
+--   "created_by" INTEGER      -- REFERENCES users(id)
+-- );
 
-CREATE TABLE "passwords" (
-  "id" SERIAL PRIMARY KEY, 
-  "user_id" INTEGER,        -- REFERENCES users(id),
-  "salt" VARCHAR,
-  "pw" VARCHAR
-);
+-- CREATE TABLE "passwords" (
+--   "id" SERIAL PRIMARY KEY, 
+--   "user_id" INTEGER,        -- REFERENCES users(id),
+--   "salt" VARCHAR,
+--   "pw" VARCHAR
+-- );
 
-CREATE TABLE "roles" (
-  "id" SERIAL PRIMARY KEY, 
-  "name" VARCHAR,
-  "description" VARCHAR
-);
+-- CREATE TABLE "roles" (
+--   "id" SERIAL PRIMARY KEY, 
+--   "name" VARCHAR,
+--   "description" VARCHAR
+-- );
 
-CREATE TABLE "user_role" (
-  "id" SERIAL PRIMARY KEY, 
-  "user_id" INTEGER NOT NULL,
-  "role_id" INTEGER NOT NULL
-);
+-- CREATE TABLE "user_role" (
+--   "id" SERIAL PRIMARY KEY, 
+--   "user_id" INTEGER NOT NULL,
+--   "role_id" INTEGER NOT NULL
+-- );
 
 -- CREATE TABLE "news" (
 --   "id" SERIAL PRIMARY KEY,

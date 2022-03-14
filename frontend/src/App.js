@@ -7,6 +7,7 @@ import Games from './pages/Games';
 import Game from './pages/Game';
 import Home from './pages/Home';
 import { getAllPlayers } from './redux/slices/playersSlice';
+import { getSeasons } from './redux/slices/seasonsSlice';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 
     useEffect(() => {
         dispatch(getAllPlayers());
+        dispatch(getSeasons());
     }, [dispatch]);
 
     return (

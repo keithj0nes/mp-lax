@@ -65,6 +65,10 @@ const Player = () => {
     return (
         <main className="py-6">
 
+            <div className="bg-red-100 p-4 text-center rounded mb-4">
+                Page under construction
+            </div>
+
             <div className="flex justify-end">
                 <button
                     type="button"

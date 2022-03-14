@@ -73,7 +73,7 @@ const EditPlayerStatsModal = ({ closeModal, player, gameId: game_id, seasonId: s
         closeModal();
     };
 
-    console.log(player, 'plaery');
+    // console.log(player, 'plaery');
 
     const renderInputs = () => Object.keys(initialState).map(item => {
         if (item === 'goals') {

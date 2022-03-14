@@ -18,6 +18,20 @@ app.use((req, res, next) => {
 });
 
 
+// const dbUriSplit = process.env.DB_URI.split(/[:/@]+/);
+// const b = {
+//     user: dbUriSplit[1],
+//     password: dbUriSplit[2],
+//     host: dbUriSplit[3],
+//     port: dbUriSplit[4],
+//     database: dbUriSplit[5],
+//     ssl: false,
+//     poolSize: 2,
+// };
+//
+// console.log(b, 'b')
+
+
 let connectionInfo;
 if (process.env.NODE_ENV === 'production') {
     const dbUriSplit = process.env.DB_URI.split(/[:/@]+/);

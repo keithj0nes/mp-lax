@@ -1,11 +1,18 @@
 // TODO: change this to a variable season
 const CURRENT_SEASON = 10001;
 
+const { _getSeasons } = require('./seasons');
+
 const getPlayers = async (req, res) => {
     const db = req.app.get('db');
     // const playersLookup = await db.players.find({}, { fields: ['player_id', 'first_name'] });
     // const playersLookup = await db.players.find();
 
+    // TODO: update query to account for if season_id is passed from frontend
+
+    const [currentSeason] = await _getSeasons(db);
+
+    console.log(currentSeason, 'currentSeason')
     const query = `
         select * from players p
         join player_season_stats pss on pss.player_id = p.player_id
@@ -13,7 +20,7 @@ const getPlayers = async (req, res) => {
         where season_id = $1
     `;
 
-    const playersLookup = await db.query(query, [CURRENT_SEASON]);
+    const playersLookup = await db.query(query, [currentSeason.id]);
 
     // console.log(playersLookup, 'playersLookup');
 

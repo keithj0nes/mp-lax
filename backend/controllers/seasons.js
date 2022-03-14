@@ -1,13 +1,27 @@
-const getSeasons = (req, res) => {
-    const string = 'getting all DA seasons';
-    return res.send(string);
+const _getSeasons = async (db) => {
+    const seasonsLookup = await db.seasons.find();
+
+    console.log(seasonsLookup, 'seasonsLookup')
+    const activeSeason = seasonsLookup.find(item => !!item.is_active);
+    console.log(activeSeason, 'activeSeason')
+    return [activeSeason, seasonsLookup];
+};
+
+const getSeasons = async (req, res) => {
+    const db = req.app.get('db');
+    // const seasonsLookup = await db.seasons.find();
+
+    // console.log(seasonsLookup, 'seasonsLookup')
+    // const activeSeason = seasonsLookup.find(item => !!item.is_active);
+
+    const [activeSeason, allSeasons] = await _getSeasons(db);
+    console.log({ seasonsLookup: allSeasons, activeSeason })
+    return res.send({ status: 200, data: { seasonsLookup: allSeasons, activeSeason }, message: 'Retrieved list of seasons' });
 };
 
 const createSeason = async (req, res) => {
     const db = req.app.get('db');
-
     const { name } = req.body;
-
     const seasonLookup = await db.seasons.findOne({ name });
 
     if (!!seasonLookup) {
@@ -19,6 +33,7 @@ const createSeason = async (req, res) => {
 };
 
 module.exports = {
+    _getSeasons,
     getSeasons,
     createSeason,
 };

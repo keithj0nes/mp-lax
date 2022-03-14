@@ -16,7 +16,7 @@ export const request = async ({ url, method, session, publicRoute }) => {
         console.error(err, 'error in request');
     });
 
-    console.log(rawResponse, 'Raw Response');
+    console.log(rawResponse.data, 'Raw Response');
     if (!rawResponse) return false;
 
     return rawResponse.data;

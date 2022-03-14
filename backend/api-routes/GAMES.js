@@ -7,7 +7,7 @@ module.exports = {
         method: 'GET',
         path: '/api/games',
         controller: controller(getGames),
-        // query: { page: 'number', dir: 'asc | desc' },
+        query: { selected_season: 'number' },
     },
     GET_GAME_BY_ID: {
         method: 'GET',

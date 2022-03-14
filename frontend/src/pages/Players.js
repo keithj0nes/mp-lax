@@ -113,6 +113,8 @@ export default function Players() {
         { label: 'A/G', sort: 'assists_per_game', alt: 'Assists Per Game' },
         { label: 'PTS', sort: 'points', alt: 'Points' },
         { label: 'P/G', sort: 'points_per_game', alt: 'Points Per Game' },
+        { label: 'SHT', sort: 'shots_on_goal', alt: 'Shots' },
+
     ];
 
     const columns2 = {
@@ -133,6 +135,7 @@ export default function Players() {
         assists_per_game: 'number',
         points: 'number',
         points_per_game: 'number',
+        shots_on_goal: 'number'
     };
     // console.log(PLAYERS, 'PLAYERS')
 

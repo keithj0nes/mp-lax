@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
+// import { format, parseISO } from 'date-fns';
+// import DateTimePicker from 'react-datetime-picker';
 import { Table, Title, Modal, Loader } from '.';
 import { useForm } from '../hooks';
 import { EditPlayerStatsModal, AddPlayerGameStatsModal } from './modals';
@@ -27,6 +29,12 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
     const { fields, handleChange } = useForm(game);
     const dispatch = useDispatch();
 
+    const [value, onChange] = useState(new Date());
+
+    const gameStringed = JSON.stringify(game);
+    const fieldsStringed = JSON.stringify(fields);
+
+    console.log(gameStringed === fieldsStringed,' first')
 
     useEffect(() => {
         _setPlayerHeaders([...playerHeaders, { label: '' }]);
@@ -35,14 +43,21 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
             edit: {
                 type: 'button',
                 func: (e) => {
+                    console.log(gameStringed === fieldsStringed)
+
+                    if (gameStringed !== fieldsStringed) {
+                        console.log('getting here')
+                        return alert('Please save game before adding player stats');
+                    }
                     setShowEditPlayerStatsModal(true);
                     setSelectedPlayer(e);
+                    return true;
                 },
                 as: 'Edit',
                 className: 'w-0 whitespace-nowrap',
             },
         });
-    }, []);
+    }, [gameStringed, fieldsStringed]);
 
     const { opponent, player_stats } = game;
     const usScoreTotal = fields.us_scores_first + fields.us_scores_second + fields.us_scores_third + fields.us_scores_fourth + fields.us_scores_overtime;
@@ -90,6 +105,26 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                     <div className="mb-2 w-full">
                         <label htmlFor="location" className="text-sm text-gray-800">Location</label>
                         <input value={fields.location} onChange={handleChange} type="text" name="location" id="location" className="mt-2 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                    </div>
+                </div>
+
+                <div className="sm:flex sm:gap-5">
+                    <div className="mb-2 w-full">
+                        <label htmlFor="opponent" className="text-sm text-gray-800">Opponent</label>
+                        {/* <input value={parseISO(fields.start_date)} onChange={handleChange} type="text" name="opponent" id="opponent" className="mt-2 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" /> */}
+                        <input value={new Date(fields.start_date).toLocaleString()} onChange={handleChange} type="text" name="start_date" id="start_date" className="mt-2 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+
+                        {/* <DateTimePicker onChange={e => handleChange(null, e, 'start_date')} value={'Tue Mar 01 2022 07:39:22 GMT-0500 (Eastern Standard Time)'} /> */}
+                    </div>
+                    {/* <div className="mb-2 w-full">
+                        <label htmlFor="location" className="text-sm text-gray-800">Location</label>
+                        <input value={fields.is_home} onChange={handleChange} type="text" name="location" id="location" className="mt-2 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                    </div> */}
+                    <div className="mb-2 w-full">
+                        <div className="flex pt-4 md:pt-10">
+                            <input checked={fields.is_home} onChange={handleChange} type="checkbox" maxLength={4} name="is_home" id="is_home" className="mt-1 rounded form-input border border-gray-300 px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                            <label htmlFor="is_home" className="pl-3  text-sm text-gray-800">Home Game?</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -269,8 +304,12 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                 <button
                     type="button"
                     onClick={async () => {
+                        if (goalsAccountedFor > usScoreTotal) {
+                            return alert('Update player scores before saving game');
+                        }
                         const b = await dispatch(updateGame(fields));
                         if (!!b) setIsEditing(false);
+                        return true;
                     }}
                     className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 hover:text-white hover:bg-mpblue"
                     // className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 bg-mpblue hover:text-mpblue hover:bg-transparent"

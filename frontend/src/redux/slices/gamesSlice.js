@@ -39,7 +39,8 @@ export const gamesSlice = createSlice({
             state.isLoading = false;
         },
         addPlayerGameStatsR: (state, action) => {
-            state.game = { ...state.game, player_stats: [...state.game.player_stats, action.payload] };
+            state.game = { ...state.game, ...action.payload.updatedGame, player_stats: [...state.game.player_stats, action.payload.addedPlayer] };
+            // state.game = { ...state.game, player_stats: [...state.game.player_stats, action.payload] };
         },
         updatePlayerGameStatsR: (state, action) => {
             const player_stats = state.game.player_stats.map(item => {
@@ -62,9 +63,9 @@ export const { getGamesR, createGameR, getGameByIdR, addPlayerGameStatsR, update
 export default gamesSlice.reducer;
 
 
-export const getAllGames = () => async (dispatch) => {
+export const getAllGames = (query) => async (dispatch) => {
     try {
-        const data = await request({ url: '/api/games', method: 'GET' });
+        const data = await request({ url: `/api/games?${query || ''}`, method: 'GET' });
         console.log(data, 'daattaaa');
         if (!data) return alert('error in getAllPlayers');
         //   const response = await axios.get(`${API_URL}/${data}`);

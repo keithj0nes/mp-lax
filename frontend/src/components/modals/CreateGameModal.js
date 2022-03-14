@@ -1,6 +1,7 @@
 // import toRegexRange from 'to-regex-range';
 import React from 'react';
 import PropTypes from 'prop-types';
+// import DateTimePicker from 'react-datetime-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from '../../hooks';
 import { createGame } from '../../redux/slices/gamesSlice';
@@ -10,6 +11,7 @@ const initialState = {
     opponent: '',
     location: '',
     start_date: new Date().toLocaleString(),
+    // start_date: new Date(),
     is_home: false,
 };
 
@@ -54,7 +56,7 @@ const CreateGameModal = ({ closeModal }) => {
     const { isLoading } = useSelector(state => state.games);
     const dispatch = useDispatch();
 
-    console.log(isLoading, ' is LAODINGGGG');
+    // console.log(isLoading, ' is LAODINGGGG');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -97,6 +99,8 @@ const CreateGameModal = ({ closeModal }) => {
                         <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.location ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.location}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
+                    {/* <DateTimePicker onChange={e => handleChange(null, e, 'start_date')} value={fields.start_date} /> */}
+
                     <div className="mb-1">
                         <label htmlFor="start_date" className="text-sm text-gray-800">Start Date</label>
                         <input value={fields.start_date} onChange={handleChange} type="text" name="start_date" id="start_date" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
@@ -120,11 +124,10 @@ const CreateGameModal = ({ closeModal }) => {
                         Cancel
                     </button>
                     <button
-                        // onClick={closeModal}
                         type="submit"
                         className="transition duration-300 border border-mpblue text-white py-1 px-3 bg-mpblue hover:text-mpblue hover:bg-transparent"
                     >
-                        Create Player
+                        Create Game
                     </button>
                 </div>
             </form>

@@ -20,7 +20,7 @@ const Games = () => {
     const [showCreateGameModal, setShowCreateGameModal] = useState(false);
     const [selectedSeason, setSelectedSeason] = useState({ value: 525, label: '2022 - [current]' });
     const dispatch = useDispatch();
-    const { games, isLoading } = useSelector(state => state.games);
+    const { games, isLoading, activeSeason } = useSelector(state => ({ ...state.games, ...state.seasons }));
 
     // console.log(games,' GAMMMEEESSS')
 
@@ -72,6 +72,7 @@ const Games = () => {
     ];
     // start_date: [d.date, d.start_time] = dateFormat(d.start_date, 'MM/DD/YY h:mmA').split(' ')
 
+    console.log(activeSeason, 'activeSeason')
 
     const formattedGames2 = games.map(item => ({
         ...item,

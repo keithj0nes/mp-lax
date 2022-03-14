@@ -81,7 +81,6 @@ const AddPlayerGameStatsModal = ({ closeModal, playersAlreadyPlaying2, gameId: g
 
     const optionsExample = filtered2.map(item => ({ value: { player_id: item.player_id, player_number: item.player_number }, label: `${item.first_name} ${item.last_name} #${item.player_number}` }));
 
-    console.log(selectedValue, 'selectedValue')
     return (
         <div className="bg-red-10 w-96">
             <div className="px-4 pt-4 pb-3 border-b border-gray-300">

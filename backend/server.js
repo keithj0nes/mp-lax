@@ -84,7 +84,9 @@ app.post(api.CREATE_SEASON.path, api.CREATE_SEASON.controller);
 
 // Players
 app.get(api.GET_PLAYERS.path, api.GET_PLAYERS.controller);
+app.get(api.GET_PLAYER_BY_ID.path, api.GET_PLAYER_BY_ID.controller);
 app.post(api.CREATE_PLAYER.path, api.CREATE_PLAYER.controller);
+app.put(api.UPDATE_PLAYER.path, api.UPDATE_PLAYER.controller);
 
 
 // Games

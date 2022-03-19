@@ -34,7 +34,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
     const gameStringed = JSON.stringify(game);
     const fieldsStringed = JSON.stringify(fields);
 
-    console.log(gameStringed === fieldsStringed,' first')
+    // console.log(gameStringed === fieldsStringed, ' first');
 
     useEffect(() => {
         _setPlayerHeaders([...playerHeaders, { label: '' }]);
@@ -291,8 +291,6 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
 
             {/* <div className="flex justify-end"> */}
             <div className="px-4 pb-4 pt-3 flex justify-end">
-
-
                 <button
                     type="button"
                     onClick={() => setIsEditing(false)}
@@ -315,7 +313,7 @@ const EditGame = ({ setIsEditing, playerHeaders, playerColumns }) => {
                     // className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 bg-mpblue hover:text-mpblue hover:bg-transparent"
 
                 >
-                    Save
+                    Save Game
                 </button>
             </div>
 

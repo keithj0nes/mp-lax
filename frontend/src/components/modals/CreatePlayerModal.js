@@ -16,6 +16,7 @@ const initialState = {
     first_name: '',
     last_name: '',
     graduation_year: '',
+    player_number: '',
     add_to_current_season: true,
 };
 
@@ -40,6 +41,12 @@ const validations = {
         pattern: {
             value: validYearsRegex,
             message: `Year must be between ${validFromYear} and ${validToYear}`,
+        },
+    },
+    player_number: {
+        required: {
+            value: true,
+            message: 'Player number is required',
         },
     },
 };
@@ -90,6 +97,12 @@ const CreatePlayerModal = ({ closeModal }) => {
                         <label htmlFor="graduation_year" className="text-sm text-gray-800">Graduation Year</label>
                         <input value={fields.graduation_year} onChange={handleChange} type="number" maxLength={4} name="graduation_year" id="graduation_year" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
                         <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.graduation_year ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.graduation_year}<span className="after:content-['.'] invisible" /></p>
+                    </div>
+
+                    <div className="mb-2">
+                        <label htmlFor="player_number" className="text-sm text-gray-800">Player Number</label>
+                        <input value={fields.player_number} onChange={handleChange} type="number" maxLength={4} name="player_number" id="player_number" className="mt-1 rounded form-input border border-gray-300 w-full px-3 py-1 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                        <p className={`pt-0.5 text-xs text-mpred transition duration-300 ${!!errors.player_number ? 'text-opacity-100' : 'text-opacity-0'}`}>{errors.player_number}<span className="after:content-['.'] invisible" /></p>
                     </div>
 
                     <div className="mb-1">

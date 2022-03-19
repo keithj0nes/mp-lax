@@ -91,7 +91,7 @@ const Game = () => {
         player_number: 'number',
         name: {
             type: 'link',
-            format: '/players/$id',
+            format: '/players/$player_id',
             as: '$first_name $last_name',
             className: 'whitespace-nowrap',
         },

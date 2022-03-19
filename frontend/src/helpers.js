@@ -17,3 +17,18 @@ export function variableStringFormatter(str, data) {
 
 // eslint-disable-next-line no-promise-executor-return
 export const wait = t => new Promise(resolve => setTimeout(resolve, t));
+
+
+export const getGrade = gradYear => {
+    const GRADETYPES = {
+        0: { label: 'Senior', as: 'SR' },
+        1: { label: 'Junior', as: 'JR' },
+        2: { label: 'Sophomore', as: 'SO' },
+        3: { label: 'Freshman', as: 'FR' },
+    };
+    const thisYear = new Date().getFullYear();
+    const m = gradYear - thisYear;
+    if (m < 0) return { label: 'Graduated' };
+    if (m > 3) return { label: 'Not in high school' };
+    return GRADETYPES[gradYear - thisYear];
+};

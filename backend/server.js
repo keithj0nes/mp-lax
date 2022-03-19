@@ -54,6 +54,9 @@ if (process.env.NODE_ENV === 'production') {
 // console.logs are not showing in heroku
 // neither established nor failed is showing
 
+
+// might be something with engine type? which was removed from package json
+
 console.log(connectionInfo, 'con info');
 
 
@@ -71,10 +74,12 @@ console.log(connectionInfo, 'con info');
 // }
 
 (async () => {
+    console.log('Database - initializing connection...');
+
     try {
         const db = await massive(connectionInfo);
         app.set('db', db);
-        console.log('Database - connection establisssshed');
+        console.log('Database - connection established');
     } catch (e) {
         console.log('Database - connection failed \n', e);
     }

@@ -50,26 +50,42 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-massive(connectionInfo, { excludeMatViews: true }).then(instance => {
-    console.log('Database - connection established');
-    app.set('db', instance); // add your connection to express
-}).catch(err => console.error('Database - connection failed \n', err));
+// error with prod
+// console.logs are not showing in heroku
+// neither established nor failed is showing
+
+console.log(connectionInfo, 'con info');
 
 
-// module.exports = app;
+// massive(connectionInfo, { excludeMatViews: true }).then(instance => {
+//     console.log('Database - connection established');
+//     app.set('db', instance); // add your connection to express
+// }).catch(err => console.log('Database - connection failed \n', err));
+
+// try {
+//     const db = await massive(connectionInfo);
+//     app.set('db', db);
+//     console.log('Database - connection established');
+// } catch (error) {
+//     console.log('Database - connection failed \n', error);
+// }
+
+(async () => {
+    try {
+        const db = await massive(connectionInfo);
+        app.set('db', db);
+        console.log('Database - connection establisssshed');
+    } catch (e) {
+        console.log('Database - connection failed \n', e);
+    }
+})();
+
 
 // module.exports = function() {
 //     console.log(app, 'appppppp')
 //     // app.set('port', 3000);
 //     return app;
 // };
-
-
-// console.log(API_TYPES, ' apy tyipes');
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 
 
 // ROUTES //

@@ -1,4 +1,4 @@
-const app = require('../server');
+// const app = require('../server');
 
 // import { customAlphabet } from 'nanoid'
 const { customAlphabet } = require('nanoid');
@@ -25,9 +25,9 @@ const _getGameById = async (db, game_id) => {
 const getGames = async (req, res) => {
     const db = req.app.get('db');
     console.log(db, 'dbbbb ===')
-    console.log(req.app, 'req appppp')
-    console.log(app, 'app from sever?')
-    console.log(app.get('db'), 'db from server haha')
+    // console.log(req.app, 'req appppp')
+    // console.log(app, 'app from sever?')
+    // console.log(app.get('db'), 'db from server haha')
     const { selected_season } = req.query;
     const [currentSeason, allSeasons] = await _getSeasons(db);
 

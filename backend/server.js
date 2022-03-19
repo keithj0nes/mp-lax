@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // might be something with engine type? which was removed from package json
 
-console.log(connectionInfo, 'con info');
+// console.log(connectionInfo, 'con info');
 
 
 // massive(connectionInfo, { excludeMatViews: true }).then(instance => {
@@ -82,6 +82,19 @@ console.log(connectionInfo, 'con info');
         console.log('Database - connection established');
     } catch (e) {
         console.log('Database - connection failed \n', e);
+    }
+})();
+
+// commit and push this to test!
+
+(async () => {
+    console.log('Starting try catch');
+
+    try {
+        console.log('throwing error here')
+        throw new Error('intentionally throwing error');
+    } catch (e) {
+        console.log('heres my error!', e);
     }
 })();
 

@@ -24,10 +24,6 @@ const _getGameById = async (db, game_id) => {
 
 const getGames = async (req, res) => {
     const db = req.app.get('db');
-    console.log(db, 'dbbbb ===')
-    // console.log(req.app, 'req appppp')
-    // console.log(app, 'app from sever?')
-    // console.log(app.get('db'), 'db from server haha')
     const { selected_season } = req.query;
     const [currentSeason, allSeasons] = await _getSeasons(db);
 
@@ -373,6 +369,7 @@ const quickAddPlayersToGame = async (req, res) => {
     const [currentSeason] = await _getSeasons(db);
 
     await db.games.update({ game_id }, { has_been_played: true });
+    console.log('RIGHT BEFORE: promises')
 
     const promises = players.map(async item => {
         await db.game_player_stats.insert({ game_id, player_id: item.player_id, player_number: item.player_number, season_id: currentSeason.id });
@@ -383,6 +380,8 @@ const quickAddPlayersToGame = async (req, res) => {
             },
         });
     });
+
+    console.log(promises, 'promises')
 
     const results = await Promise.all(promises);
     console.log(results, 'restultsss');

@@ -77,7 +77,10 @@ if (process.env.NODE_ENV === 'production') {
     console.log('Database - initializing connection...');
 
     try {
+        console.log('trying here')
         const db = await massive(connectionInfo);
+        console.log('trying here 22222')
+
         app.set('db', db);
         console.log('Database - connection established');
     } catch (e) {
@@ -87,16 +90,16 @@ if (process.env.NODE_ENV === 'production') {
 
 // commit and push this to test!
 
-(async () => {
-    console.log('Starting try catch');
+// (async () => {
+//     console.log('Starting try catch');
 
-    try {
-        console.log('throwing error here')
-        throw new Error('intentionally throwing error');
-    } catch (e) {
-        console.log('heres my error!', e);
-    }
-})();
+//     try {
+//         console.log('throwing error here')
+//         throw new Error('intentionally throwing error');
+//     } catch (e) {
+//         console.log('heres my error!', e);
+//     }
+// })();
 
 
 // module.exports = function() {

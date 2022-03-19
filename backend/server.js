@@ -1,7 +1,7 @@
 const express = require('express');
 const massive = require('massive');
 const cors = require('cors');
-// const path = require('path');
+const path = require('path');
 const api = require('./api-routes');
 
 require('dotenv').config();
@@ -99,6 +99,17 @@ app.patch(api.QUICK_ADD_PLAYERS_TO_GAME.path, api.QUICK_ADD_PLAYERS_TO_GAME.cont
 app.put(api.UPDATE_GAME.path, api.UPDATE_GAME.controller);
 app.delete(api.REMOVE_PLAYER_FROM_GAME_STATS.path, api.REMOVE_PLAYER_FROM_GAME_STATS.controller);
 
+
+// Used for production
+if (process.env.NODE_ENV === 'production') {
+    console.log('running in herooku');
+    // Serve any static files
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
+    // Handle React routing, return all requests to React app
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+    });
+}
 
 app.listen(process.env.PORT, () => {
     console.log(`App listening on port ${process.env.PORT}!`);

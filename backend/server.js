@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === 'production') {
         port: dbUriSplit[4],
         database: dbUriSplit[5],
         ssl: false,
-        poolSize: 2,
+        poolSize: 4,
     };
 } else {
     connectionInfo = process.env.DB_URI;

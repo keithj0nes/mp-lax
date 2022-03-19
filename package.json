@@ -29,7 +29,7 @@
       "nodemon": "^2.0.15",
       "passport": "^0.4.0",
       "passport-jwt": "^4.0.0",
-      "passport-local": "^1.0.0",
+      "passport-local": "^1.0.0"
     },
     "devDependencies": {
       "@babel/plugin-proposal-decorators": "^7.8.3",

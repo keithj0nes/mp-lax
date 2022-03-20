@@ -280,7 +280,7 @@ const addPlayerGameStats = async (req, res) => {
 
     const q2 = `
         UPDATE game_team_stats 
-        SET games_played = games_played + 1,
+        SET
             us_shots = us_shots + ${sog},
             us_ground_balls = us_ground_balls + ${ground_balls},
             us_penalties_in_minutes = us_penalties_in_minutes + ${penalties_in_minutes}

@@ -279,7 +279,7 @@ const addPlayerGameStats = async (req, res) => {
     // });
 
     const q2 = `
-        UPDATE player_season_stats 
+        UPDATE game_team_stats 
         SET games_played = games_played + 1,
             us_shots = us_shots + ${sog},
             us_ground_balls = us_ground_balls + ${ground_balls},
@@ -288,7 +288,7 @@ const addPlayerGameStats = async (req, res) => {
         AND season_id = $2;
     `;
 
-    const updatedGame = await db.query(q2, [player_id, currentSeason.id]);
+    const updatedGame = await db.query(q2, [game_id, currentSeason.id]);
 
     console.log(updatedGame,' updated game!!!')
 

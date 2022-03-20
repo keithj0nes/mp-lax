@@ -229,21 +229,33 @@ const addPlayerGameStats = async (req, res) => {
 
     const data = await db.game_player_stats.insert({ game_id, player_id, ...req.body });
 
-    const newSeasonStats = await db.player_season_stats.update({ player_id, season_id: currentSeason.id }, {
-        $set: {
-            games_played: 'games_played + 1',
-            goals: `goals + ${goals}`,
-            assists: `assists + ${assists}`,
-            shots_on_goal: `shots_on_goal + ${sog}`,
-            take_aways: `take_aways + ${takeaways}`,
-            interceptions: `interceptions + ${interceptions}`,
-            unforced_errors: `unforced_errors + ${unforced_errors}`,
-            penalties_count: `penalties_count + ${penalties}`,
-            penalties_in_minutes: `penalties_in_minutes + ${penalties_in_minutes}`,
-            ground_balls: `ground_balls + ${ground_balls}`,
-            points: `points + ${goals + assists}`,
-        },
-    });
+
+    const q = `
+        UPDATE player_season_stats 
+        SET games_played = games_played + 1,
+            goals = goals + 10
+            assists = assists + 10
+        WHERE player_id = $1
+        AND season_id = $2;
+    `;
+
+    const newSeasonStats = await db.query(q, [player_id, currentSeason.id]);
+
+    // const newSeasonStats = await db.player_season_stats.update({ player_id, season_id: currentSeason.id }, {
+    //     $set: {
+    //         games_played: 'games_played + 1',
+    //         goals: `goals + ${goals}`,
+    //         assists: `assists + ${assists}`,
+    //         shots_on_goal: `shots_on_goal + ${sog}`,
+    //         take_aways: `take_aways + ${takeaways}`,
+    //         interceptions: `interceptions + ${interceptions}`,
+    //         unforced_errors: `unforced_errors + ${unforced_errors}`,
+    //         penalties_count: `penalties_count + ${penalties}`,
+    //         penalties_in_minutes: `penalties_in_minutes + ${penalties_in_minutes}`,
+    //         ground_balls: `ground_balls + ${ground_balls}`,
+    //         points: `points + ${goals + assists}`,
+    //     },
+    // });
 
     console.log({ newSeasonStats });
 

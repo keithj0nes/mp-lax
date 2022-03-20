@@ -1,4 +1,4 @@
-const { getSeasons, createSeason } = require('../controllers/seasons');
+const { getSeasons, createSeason, updateSeason } = require('../controllers/seasons');
 
 const controller = (cb) => (process.argv[2] === 'showTable' ? cb.name : cb);
 
@@ -11,7 +11,7 @@ module.exports = {
     },
     GET_SEASONS_BY_ID: {
         method: 'GET',
-        path: '/api/seasons/:id',
+        path: '/api/seasons/:season_id',
         params: { id: 'number' },
     },
     CREATE_SEASON: {
@@ -19,5 +19,11 @@ module.exports = {
         path: '/api/seasons',
         controller: controller(createSeason),
         body: { name: 'string' },
+    },
+    UPDATE_SEASON: {
+        method: 'PUT',
+        path: '/api/seasons/:season_id',
+        controller: controller(updateSeason),
+        body: { name: 'string', is_active: 'boolean' },
     },
 };

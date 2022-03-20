@@ -60,10 +60,10 @@ if (process.env.NODE_ENV === 'production') {
 // console.log(connectionInfo, 'con info');
 
 
-// massive(connectionInfo, { excludeMatViews: true }).then(instance => {
-//     console.log('Database - connection established');
-//     app.set('db', instance); // add your connection to express
-// }).catch(err => console.log('Database - connection failed \n', err));
+massive(connectionInfo, { excludeMatViews: true }).then(instance => {
+    console.log('Database - connection established');
+    app.set('db', instance); // add your connection to express
+}).catch(err => console.log('Database - connection failed \n', err));
 
 // try {
 //     const db = await massive(connectionInfo);
@@ -73,20 +73,20 @@ if (process.env.NODE_ENV === 'production') {
 //     console.log('Database - connection failed \n', error);
 // }
 
-(async () => {
-    console.log('Database - initializing connection...');
+// (async () => {
+//     console.log('Database - initializing connection...');
 
-    try {
-        console.log('trying here')
-        const db = await massive(connectionInfo);
-        console.log('trying here 22222')
+//     try {
+//         console.log('trying here')
+//         const db = await massive(connectionInfo);
+//         console.log('trying here 22222')
 
-        app.set('db', db);
-        console.log('Database - connection established');
-    } catch (e) {
-        console.log('Database - connection failed \n', e);
-    }
-})();
+//         app.set('db', db);
+//         console.log('Database - connection established');
+//     } catch (e) {
+//         console.log('Database - connection failed \n', e);
+//     }
+// })();
 
 // commit and push this to test!
 
@@ -114,10 +114,11 @@ if (process.env.NODE_ENV === 'production') {
 // Seasons
 app.get(api.GET_SEASONS.path, api.GET_SEASONS.controller);
 app.get(api.GET_SEASONS_BY_ID.path, (req, res) => {
-    res.send(`Hello SEAONS by iddddd! ${req.params.id}`);
+    res.send(`Hello SEAONS by iddddd! ${req.params.season_id}`);
 });
 
 app.post(api.CREATE_SEASON.path, api.CREATE_SEASON.controller);
+app.put(api.UPDATE_SEASON.path, api.UPDATE_SEASON.controller);
 
 
 // Players

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import toRegexRange from 'to-regex-range';
@@ -8,7 +8,6 @@ import { updatePlayer } from '../redux/slices/playersSlice';
 const validFromYear = new Date().getFullYear() - 3;
 const validToYear = validFromYear + 6;
 const validYearsRegex = toRegexRange(validFromYear, validToYear, { capture: true });
-
 
 const validations = {
     first_name: {
@@ -43,19 +42,9 @@ const EditPlayer = ({ setIsEditing }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        console.log(fields,' fieldssSsS!')
-
         const isValidated = validate(validations);
-        console.log(isValidated, 'isValidated')
-        // console.log(fields, 'fields!!!!!')
-        console.log(errors, 'errors!!!!!')
-
         if (!isValidated) return;
-
-        // console.log('SUBMIT FUNCTION HERE!!!')
         dispatch(updatePlayer(fields));
-        // closeModal();
     };
     return (
         <>
@@ -123,6 +112,4 @@ export default EditPlayer;
 
 EditPlayer.propTypes = {
     setIsEditing: PropTypes.func.isRequired,
-    // playerHeaders: PropTypes.array.isRequired,
-    // playerColumns: PropTypes.object.isRequired,
 };

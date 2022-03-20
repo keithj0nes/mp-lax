@@ -1,5 +1,10 @@
 const _getSeasons = async (db) => {
-    const seasonsLookup = await db.seasons.find();
+    const seasonsLookup = await db.seasons.find({}, {
+        order: [{
+            field: 'id',
+            direction: 'asc',
+        }],
+    });
 
     // console.log(seasonsLookup, 'seasonsLookup')
     const activeSeason = seasonsLookup.find(item => !!item.is_active);
@@ -32,8 +37,31 @@ const createSeason = async (req, res) => {
     return res.send({ status: 200, data, message: 'Season created', notification_type: 'snack' });
 };
 
+const updateSeason = async (req, res) => {
+    const db = req.app.get('db');
+    const { season_id } = req.params;
+    const { name, is_active } = req.body;
+
+    const seasonLookup = await db.seasons.findOne({ id: season_id });
+
+    if (!seasonLookup) {
+        return res.send({ status: 404, data: [], message: 'Season does not exist' });
+    }
+
+    let updatedSeason;
+    if (!!is_active) {
+        await db.seasons.update({ is_active: true }, { is_active: false });
+        updatedSeason = await db.seasons.update({ id: season_id }, { name, is_active });
+    } else {
+        updatedSeason = await db.seasons.update({ id: season_id }, { name });
+    }
+
+    return res.send({ status: 200, data: updatedSeason[0], message: 'Season updated', notification_type: 'snack' });
+};
+
 module.exports = {
     _getSeasons,
     getSeasons,
     createSeason,
+    updateSeason,
 };

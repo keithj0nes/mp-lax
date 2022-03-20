@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
 import { ArrowDownIcon } from '@heroicons/react/solid';
+import { useSelector } from 'react-redux';
 import { Modal } from '../components';
 import { CreateSeasonModal, EditSeasonModal } from '../components/modals';
 
 const Home = () => {
     const [showCreateSeasonModal, setShowCreateSeasonModal] = useState(false);
     const [showEditSeasonModal, setShowEditSeasonModal] = useState(false);
+    const { isLoading } = useSelector(state => ({ ...state.seasons }));
 
     return (
         <main className="py-6">
+            <Modal isOpen={showCreateSeasonModal} onClose={setShowCreateSeasonModal} closeableOnBackdrop={!isLoading}>
+                {(closeModal) => <CreateSeasonModal closeModal={closeModal} />}
+            </Modal>
+
+            <Modal isOpen={showEditSeasonModal} onClose={setShowEditSeasonModal} closeableOnBackdrop={!isLoading}>
+                {(closeModal) => <EditSeasonModal closeModal={closeModal} />}
+            </Modal>
+
             <div className="flex justify-end mb-4 ">
                 <button
                     type="button"
@@ -33,14 +43,6 @@ const Home = () => {
                     Click links at top
                 </p>
             </div>
-
-            <Modal isOpen={showCreateSeasonModal} onClose={setShowCreateSeasonModal}>
-                {(closeModal) => <CreateSeasonModal closeModal={closeModal} />}
-            </Modal>
-
-            <Modal isOpen={showEditSeasonModal} onClose={setShowEditSeasonModal}>
-                {(closeModal) => <EditSeasonModal closeModal={closeModal} />}
-            </Modal>
         </main>
     );
 };

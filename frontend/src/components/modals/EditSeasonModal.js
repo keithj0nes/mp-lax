@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from '../../hooks';
+import { updateSeason } from '../../redux/slices/seasonsSlice';
+import { Loader } from '..';
 
 const validations = {
     name: {
@@ -14,22 +16,23 @@ const validations = {
 
 const EditSeasonModal = ({ closeModal }) => {
     // const [state, setState] = useState(null);
-    const { seasons } = useSelector(state => ({ ...state.seasons }));
+    const { seasons, isLoading } = useSelector(state => ({ ...state.seasons }));
     const [isEditing, setIsEditing] = useState(false);
     const [selected, setSelected] = useState({});
     const { fields, handleChange, errors, validate } = useForm(selected);
+    const dispatch = useDispatch();
 
-    console.log(seasons, ' seasons');
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(fields,' fieldssss')
         const isValidated = validate(validations);
-        console.log(isValidated,' iss itt??')
-    }
+        if (!isValidated) return;
+        const shouldClose = await dispatch(updateSeason(fields));
+        if (shouldClose) closeModal();
+    };
 
     return (
         <div className={!isEditing ? 'w-60' : ''}>
+            <Loader loading={isLoading} />
             <div className="px-4 pt-4 pb-3 border-b border-gray-300">
                 <h3 className="font-bold">{isEditing ? 'Edit Season' : 'Seasons'}</h3>
             </div>

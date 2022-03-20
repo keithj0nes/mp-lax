@@ -233,7 +233,7 @@ const addPlayerGameStats = async (req, res) => {
     const q = `
         UPDATE player_season_stats 
         SET games_played = games_played + 1,
-            goals = goals + 10
+            goals = goals + 10,
             assists = assists + 10
         WHERE player_id = $1
         AND season_id = $2;

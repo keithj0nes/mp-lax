@@ -94,7 +94,13 @@ const Player = () => {
 
     const currentSeasonColumns2 = {
         start_date: 'string',
-        opponent: 'string',
+        // opponent: 'string',
+        opponent: {
+            type: 'link',
+            format: '/games/$game_id',
+            as: '$opponent',
+            className: 'whitespace-nowrap',
+        },
         goals: 'number',
         assists: 'number',
         points: 'number',

@@ -347,21 +347,39 @@ const updatePlayerGameStats = async (req, res) => {
 
     const data = await db.game_player_stats.update({ player_id, game_id }, { goals, assists, sog, ground_balls, interceptions, takeaways, unforced_errors, penalties, penalties_in_minutes });
 
+    // const seasonStats = await db.player_season_stats.update({ player_id, season_id: currentSeason.id }, {
+    //     $set: {
+    //         goals: `goals + ${diffGoals}`,
+    //         assists: `assists + ${diffAssists}`,
+    //         shots_on_goal: `shots_on_goal + ${diffShots}`,
+    //         take_aways: `take_aways + ${diffTA}`,
+    //         interceptions: `interceptions + ${diffInt}`,
+    //         unforced_errors: `unforced_errors + ${diffUE}`,
+    //         penalties_count: `penalties_count + ${diffPen}`,
+    //         penalties_in_minutes: `penalties_in_minutes + ${diffPims}`,
+    //         ground_balls: `ground_balls + ${diffGB}`,
+    //         points: `points + ${diffGoals + diffAssists}`,
+    //     },
+    // });
 
-    const seasonStats = await db.player_season_stats.update({ player_id, season_id: currentSeason.id }, {
-        $set: {
-            goals: `goals + ${diffGoals}`,
-            assists: `assists + ${diffAssists}`,
-            shots_on_goal: `shots_on_goal + ${diffShots}`,
-            take_aways: `take_aways + ${diffTA}`,
-            interceptions: `interceptions + ${diffInt}`,
-            unforced_errors: `unforced_errors + ${diffUE}`,
-            penalties_count: `penalties_count + ${diffPen}`,
-            penalties_in_minutes: `penalties_in_minutes + ${diffPims}`,
-            ground_balls: `ground_balls + ${diffGB}`,
-            points: `points + ${diffGoals + diffAssists}`,
-        },
-    });
+    const q = `
+        UPDATE player_season_stats 
+        SET
+            goals = goals + ${diffGoals},
+            assists = assists + ${diffAssists},
+            shots_on_goal = shots_on_goal + ${diffShots},
+            take_aways = take_aways + ${diffTA},
+            interceptions = interceptions + ${diffInt},
+            unforced_errors = unforced_errors + ${diffUE},
+            penalties_count = penalties_count + ${diffPen},
+            penalties_in_minutes = penalties_in_minutes + ${diffPims},
+            ground_balls = ground_balls + ${diffGB},
+            points = points + ${diffGoals + diffAssists}
+        WHERE player_id = $1
+        AND season_id = $2;
+    `;
+
+    const seasonStats = await db.query(q, [player_id, currentSeason.id]);
 
     console.log({ seasonStats });
 
@@ -376,16 +394,28 @@ const updatePlayerGameStats = async (req, res) => {
     // get current game_team_stats
 
 
-    const [updatedGame] = await db.game_team_stats.update({ game_id }, {
-        $set: {
-            us_shots: `us_shots + ${diffShots}`,
-            us_ground_balls: `us_ground_balls + ${diffGB}`,
-            us_penalties_in_minutes: `us_penalties_in_minutes + ${diffPims}`,
-            // us_faceoffs_won: `us_faceoffs_won + ${diffFO}`
-            // us_goals_against: `us_goals_against + `
-            // us_goals_for: 7
-        },
-    });
+    // const [updatedGame] = await db.game_team_stats.update({ game_id }, {
+    //     $set: {
+    //         us_shots: `us_shots + ${diffShots}`,
+    //         us_ground_balls: `us_ground_balls + ${diffGB}`,
+    //         us_penalties_in_minutes: `us_penalties_in_minutes + ${diffPims}`,
+    //         // us_faceoffs_won: `us_faceoffs_won + ${diffFO}`
+    //         // us_goals_against: `us_goals_against + `
+    //         // us_goals_for: 7
+    //     },
+    // });
+
+    const q2 = `
+        UPDATE game_team_stats 
+        SET
+            us_shots = us_shots + ${diffShots},
+            us_ground_balls = us_ground_balls + ${diffGB},
+            us_penalties_in_minutes = us_penalties_in_minutes + ${diffPims}
+        WHERE game_id = $1
+        AND season_id = $2;
+    `;
+
+    const updatedGame = await db.query(q2, [game_id, currentSeason.id]);
 
     // console.log(databb, 'databbbbbbb')
     // console.log(data, 'datadatav')
@@ -446,31 +476,64 @@ const removePlayerFromGameStats = async (req, res) => {
     // console.log(req.body, 'req bodyyyy')
 
 
-    await db.game_team_stats.update({ game_id }, {
-        $set: {
-            us_shots: `us_shots - ${sog}`,
-            us_ground_balls: `us_ground_balls - ${ground_balls}`,
-            us_penalties_in_minutes: `us_penalties_in_minutes - ${penalties_in_minutes}`,
-            // us_faceoffs_won: `us_faceoffs_won + ${diffFO}`
-            // us_goals_against: `us_goals_against + `
-        },
-    });
+    const q2 = `
+        UPDATE game_team_stats 
+        SET
+            us_shots = us_shots - ${sog},
+            us_ground_balls = us_ground_balls - ${ground_balls},
+            us_penalties_in_minutes = us_penalties_in_minutes - ${penalties_in_minutes}
+        WHERE game_id = $1
+        AND season_id = $2;
+    `;
 
-    await db.player_season_stats.update({ player_id, season_id: currentSeason.id }, {
-        $set: {
-            games_played: 'games_played - 1',
-            goals: `goals - ${goals}`,
-            assists: `assists - ${assists}`,
-            shots_on_goal: `shots_on_goal - ${sog}`,
-            take_aways: `take_aways - ${takeaways}`,
-            interceptions: `interceptions - ${interceptions}`,
-            unforced_errors: `unforced_errors - ${unforced_errors}`,
-            penalties_count: `penalties_count - ${penalties}`,
-            penalties_in_minutes: `penalties_in_minutes - ${penalties_in_minutes}`,
-            ground_balls: `ground_balls - ${ground_balls}`,
-            points: `points - ${goals + assists}`,
-        },
-    });
+    await db.query(q2, [game_id, currentSeason.id]);
+
+
+    // await db.game_team_stats.update({ game_id }, {
+    //     $set: {
+    //         us_shots: `us_shots - ${sog}`,
+    //         us_ground_balls: `us_ground_balls - ${ground_balls}`,
+    //         us_penalties_in_minutes: `us_penalties_in_minutes - ${penalties_in_minutes}`,
+    //         // us_faceoffs_won: `us_faceoffs_won + ${diffFO}`
+    //         // us_goals_against: `us_goals_against + `
+    //     },
+    // });
+
+    // await db.player_season_stats.update({ player_id, season_id: currentSeason.id }, {
+    //     $set: {
+    //         games_played: 'games_played - 1',
+    //         goals: `goals - ${goals}`,
+    //         assists: `assists - ${assists}`,
+    //         shots_on_goal: `shots_on_goal - ${sog}`,
+    //         take_aways: `take_aways - ${takeaways}`,
+    //         interceptions: `interceptions - ${interceptions}`,
+    //         unforced_errors: `unforced_errors - ${unforced_errors}`,
+    //         penalties_count: `penalties_count - ${penalties}`,
+    //         penalties_in_minutes: `penalties_in_minutes - ${penalties_in_minutes}`,
+    //         ground_balls: `ground_balls - ${ground_balls}`,
+    //         points: `points - ${goals + assists}`,
+    //     },
+    // });
+
+    const q = `
+        UPDATE player_season_stats 
+        SET
+            games_played = games_played - 1,
+            goals = goals - ${goals},
+            assists = assists - ${assists},
+            shots_on_goal = shots_on_goal - ${sog},
+            take_aways = take_aways - ${takeaways},
+            interceptions = interceptions - ${interceptions},
+            unforced_errors = unforced_errors - ${unforced_errors},
+            penalties_count = penalties_count - ${penalties},
+            penalties_in_minutes = penalties_in_minutes - ${penalties_in_minutes},
+            ground_balls = ground_balls - ${ground_balls},
+            points = points - ${goals + assists}
+        WHERE player_id = $1
+        AND season_id = $2;
+    `;
+
+    await db.query(q, [player_id, currentSeason.id]);
 
     const [removedPlayer] = await db.game_player_stats.destroy({ player_id, game_id });
 

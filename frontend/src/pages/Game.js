@@ -67,7 +67,9 @@ const Game = () => {
         };
     }, [dispatch, params.game_id]);
 
-    const { goalie_stats } = GAME;
+    // const { goalie_stats } = GAME;
+
+    const goalie_stats = GAME.goalie_stats.map(item => ({ ...item, name: `${item.first_name} ${item.last_name}` }));
 
     const { has_been_played, opponent, location, start_date, player_stats } = game;
 
@@ -124,12 +126,13 @@ const Game = () => {
 
     const goalieColumns = {
         player_number: 'number',
-        name: {
-            type: 'link',
-            format: '/players/$id',
-            as: '$first_name $last_name',
-            className: 'whitespace-nowrap',
-        },
+        name: 'string',
+        // name: {
+        //     type: 'link',
+        //     format: '/players/$id',
+        //     as: '$first_name $last_name',
+        //     className: 'whitespace-nowrap',
+        // },
         shots_on_goal: 'number',
         saves: 'number',
         save_percentage: 'number',

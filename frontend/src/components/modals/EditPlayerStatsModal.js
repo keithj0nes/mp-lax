@@ -51,7 +51,7 @@ const EditPlayerStatsModal = ({ closeModal, player, gameId: game_id, seasonId: s
     // console.log(rest.goals, totalGoalsAllowed, 'rest goals')
 
     // console.log(totalGoalsAllowed - rest.goals, 'totalGoalsAllowed')
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // const isValidated = validate(validations)
         // console.log(isValidated, 'isValidated')
@@ -64,8 +64,8 @@ const EditPlayerStatsModal = ({ closeModal, player, gameId: game_id, seasonId: s
         const playerStats = { ...player, ...fields, game_id, season_id };
 
         // await dispatch and show loader until success
-        dispatch(updatePlayerGameStats(playerStats));
-        closeModal();
+        const shouldClose = await dispatch(updatePlayerGameStats(playerStats));
+        if (shouldClose) closeModal();
     };
 
     const handleRemovePlayerFromGame = async () => {

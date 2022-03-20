@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { useForm } from '../../hooks';
 import { addPlayerGameStats } from '../../redux/slices/gamesSlice';
-import { Select } from '..';
+import { Select, Loader } from '..';
 
 const initialState = {
     goals: 0,
@@ -36,16 +36,20 @@ const AddPlayerGameStatsModal = ({ closeModal, playersAlreadyPlaying2, gameId: g
     const { fields, handleChange } = useForm({ ...initialState });
     const dispatch = useDispatch();
 
-    const { players } = useSelector(state => state.players);
+    // const { players } = useSelector(state => state.players);
+    const { players, isLoading } = useSelector(state => ({ ...state.games, ...state.players }));
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!selectedValue) {
             setShowDropdownError(true);
         }
         const playerStats = { ...selectedValue.value, ...fields, game_id, season_id };
-        dispatch(addPlayerGameStats(playerStats));
-        closeModal();
+        // dispatch(addPlayerGameStats(playerStats));
+        // closeModal();
+
+        const shouldClose = await dispatch(addPlayerGameStats(playerStats));
+        if (shouldClose) closeModal();
     };
 
     const renderInputs = () => Object.keys(initialState).map(item => {
@@ -83,6 +87,8 @@ const AddPlayerGameStatsModal = ({ closeModal, playersAlreadyPlaying2, gameId: g
 
     return (
         <div className="bg-red-10 w-96">
+            <Loader loading={isLoading} />
+
             <div className="px-4 pt-4 pb-3 border-b border-gray-300">
                 <h3 className="font-bold">Add Player Stats</h3>
             </div>

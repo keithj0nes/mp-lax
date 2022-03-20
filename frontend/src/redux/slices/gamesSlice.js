@@ -129,6 +129,9 @@ export const updateGame = (gameDetails) => async (dispatch) => {
 
 
 export const updatePlayerGameStats = (playerStats) => async (dispatch) => {
+    dispatch(setIsLoadingR());
+    await wait(600);
+
     console.log(playerStats, ' playerStats game!!');
     const { game_id, player_id, ...rest } = playerStats;
     try {
@@ -137,6 +140,7 @@ export const updatePlayerGameStats = (playerStats) => async (dispatch) => {
         if (!data) return alert('error in updatePlayerGameStats');
         //   const response = await axios.get(`${API_URL}/${data}`);
         dispatch(updatePlayerGameStatsR(data.data));
+        dispatch(setIsLoadingR(false));
         return true;
     } catch (err) {
         throw new Error(err);
@@ -144,6 +148,9 @@ export const updatePlayerGameStats = (playerStats) => async (dispatch) => {
 };
 
 export const addPlayerGameStats = (playerStats) => async (dispatch) => {
+    dispatch(setIsLoadingR());
+    await wait(600);
+
     console.log(playerStats, 'playerstattsss =====++++');
     const { game_id, player_id, ...rest } = playerStats;
     try {
@@ -151,6 +158,7 @@ export const addPlayerGameStats = (playerStats) => async (dispatch) => {
         console.log(data, 'data in addPlayerGameStats');
         if (!data) return alert('error in addPlayerGameStats');
         dispatch(addPlayerGameStatsR(data.data));
+        dispatch(setIsLoadingR(false));
         return true;
     } catch (err) {
         throw new Error(err);

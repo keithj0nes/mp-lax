@@ -374,11 +374,22 @@ const quickAddPlayersToGame = async (req, res) => {
     const promises = players.map(async item => {
         await db.game_player_stats.insert({ game_id, player_id: item.player_id, player_number: item.player_number, season_id: currentSeason.id });
 
-        await db.player_season_stats.update({ player_id: item.player_id, season_id: currentSeason.id }, {
-            $set: {
-                games_played: 'games_played + 1',
-            },
-        });
+
+        const q = `
+            UPDATE player_season_stats 
+            SET games_played = games_played + 1
+            WHERE player_id = $1
+            AND season_id = $2;
+        `;
+
+        await db.query(q, [item.player_id, currentSeason.id]);
+
+
+        // await db.player_season_stats.update({ player_id: item.player_id, season_id: currentSeason.id }, {
+        //     $set: {
+        //         games_played: 'games_played + 1',
+        //     },
+        // });
     });
 
     console.log(promises, 'promises')

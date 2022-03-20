@@ -233,8 +233,16 @@ const addPlayerGameStats = async (req, res) => {
     const q = `
         UPDATE player_season_stats 
         SET games_played = games_played + 1,
-            goals = goals + 10,
-            assists = assists + 10
+            goals = goals + ${goals},
+            assists = assists + ${assists},
+            shots_on_goal = shots_on_goal + ${sog},
+            take_aways = take_aways + ${takeaways},
+            interceptions = interceptions + ${interceptions},
+            unforced_errors = unforced_errors + ${unforced_errors},
+            penalties_count = penalties_count + ${penalties},
+            penalties_in_minutes = penalties_in_minutes + ${penalties_in_minutes},
+            ground_balls = ground_balls + ${ground_balls},
+            points = points + ${goals + assists}
         WHERE player_id = $1
         AND season_id = $2;
     `;
@@ -259,16 +267,30 @@ const addPlayerGameStats = async (req, res) => {
 
     console.log({ newSeasonStats });
 
-    const [updatedGame] = await db.game_team_stats.update({ game_id }, {
-        $set: {
-            us_shots: `us_shots + ${sog}`,
-            us_ground_balls: `us_ground_balls + ${ground_balls}`,
-            us_penalties_in_minutes: `us_penalties_in_minutes + ${penalties_in_minutes}`,
-            // us_faceoffs_won: `us_faceoffs_won + ${diffFO}`
-            // us_goals_against: `us_goals_against + `
-            // us_goals_for: 7
-        },
-    });
+    // const [updatedGame] = await db.game_team_stats.update({ game_id }, {
+    //     $set: {
+    //         us_shots: `us_shots + ${sog}`,
+    //         us_ground_balls: `us_ground_balls + ${ground_balls}`,
+    //         us_penalties_in_minutes: `us_penalties_in_minutes + ${penalties_in_minutes}`,
+    //         // us_faceoffs_won: `us_faceoffs_won + ${diffFO}`
+    //         // us_goals_against: `us_goals_against + `
+    //         // us_goals_for: 7
+    //     },
+    // });
+
+    const q2 = `
+        UPDATE player_season_stats 
+        SET games_played = games_played + 1,
+            us_shots = us_shots + ${sog},
+            us_ground_balls = us_ground_balls + ${ground_balls},
+            us_penalties_in_minutes = us_penalties_in_minutes + ${penalties_in_minutes}
+        WHERE player_id = $1
+        AND season_id = $2;
+    `;
+
+    const updatedGame = await db.query(q2, [player_id, currentSeason.id]);
+
+    console.log(updatedGame,' updated game!!!')
 
     return res.send({ status: 200, data: { updatedGame, addedPlayer: { ...data, first_name, last_name } }, message: 'Player stats added to game' });
     // return res.send({ status: 200, data: { ...data, first_name, last_name }, message: 'Player stats added to game' });

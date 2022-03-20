@@ -284,7 +284,7 @@ const addPlayerGameStats = async (req, res) => {
             us_shots = us_shots + ${sog},
             us_ground_balls = us_ground_balls + ${ground_balls},
             us_penalties_in_minutes = us_penalties_in_minutes + ${penalties_in_minutes}
-        WHERE player_id = $1
+        WHERE game_id = $1
         AND season_id = $2;
     `;
 

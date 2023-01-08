@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 // import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // import classnames from 'classnames';
 import { Table, Select, Title, Modal } from '../components';
 import { CreatePlayerModal } from '../components/modals';
-import { getAllPlayers } from '../redux/slices/playersSlice';
+import { getPlayers } from '../redux/slices/playersSlice';
 
 // const PLAYERS = [
 //     { id: 1, first_name: 'John', last_name: 'Hicks', number: 22, graduation_year: 2024, games_played: 4, goals: 19, goals_per_game: 4.75, assists: 4, assists_per_game: 1, points: 23, points_per_game: 5.8 },
@@ -18,8 +20,25 @@ import { getAllPlayers } from '../redux/slices/playersSlice';
 //     { id: 13, first_name: 'Martin', last_name: 'Santana', number: 2, graduation_year: 2022, games_played: 6, goals: 1, goals_per_game: 0.1, assists: 0, assists_per_game: 0, points: 1, points_per_game: 0.1 },
 // ];
 
+
+const optionsExample = [
+    { value: 525, label: '2022 - [current]' },
+    { value: 5253, label: '2021' },
+    { value: 52534, label: '2020' },
+    { value: 2352, label: '2019' },
+    { value: 3423, label: '2018' },
+];
+
+const levels = [
+    { value: 2, label: 'High School' },
+    { value: 2, label: 'Middle School' },
+    { value: 2, label: 'Elementary' },
+]
+
 export default function Players() {
-    const [selectedSeason, setSelectedSeason] = useState({ value: 525, label: '2022 - [current]' });
+    const [selectedSeason, setSelectedSeason] = useState(optionsExample[0]);
+    const [level, setLevel] = useState(levels[0]);
+
     const [showCreatePlayerModal, setShowCreatePlayerModal] = useState(false);
     // const params = useParams();
     // console.log(params, 'param')
@@ -37,7 +56,7 @@ export default function Players() {
     // console.log(players,' LMAO ========')
 
     useEffect(() => {
-        dispatch(getAllPlayers());
+        dispatch(getPlayers());
     }, [dispatch]);
 
     // console.log(count,' COUNTTT')
@@ -85,13 +104,7 @@ export default function Players() {
     //     // },
     // };
 
-    const optionsExample = [
-        { value: 525, label: '2022 - [current]' },
-        { value: 5253, label: '2021' },
-        { value: 52534, label: '2020' },
-        { value: 2352, label: '2019' },
-        { value: 3423, label: '2018' },
-    ];
+
 
     const headers2 = [
         // { label: '#', sort: 'player_id', className: 'whitespace-nowrap', alt: 'Jersey', default: true },
@@ -141,16 +154,36 @@ export default function Players() {
 
     return (
         <main className="py-6">
+            <Helmet>
+                <title>MP Boys Lax | Players</title>
+            </Helmet>
 
             <Modal isOpen={showCreatePlayerModal} onClose={setShowCreatePlayerModal}>
                 {(closeModal) => <CreatePlayerModal closeModal={closeModal} />}
             </Modal>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end mb-4 ">
+                {/* <button
+                    type="button"
+                    // onClick={closeModal}
+                    // onClick={() => setShowEditSeasonModal(true)}
+                    className="transition duration-300 text-sm text-mpblue py-1 px-3 mr-2 hover:underline hover:bg-transparent"
+                >
+                    View All Players
+                </button> */}
+
+                <Link
+                    to="/players/all"
+                    className="transition duration-300 text-sm text-mpblue py-1 px-3 mr-2 hover:underline hover:bg-transparent"
+                >
+                    View All Players
+                </Link>
+
+
                 <button
                     type="button"
                     onClick={() => setShowCreatePlayerModal(true)}
-                    className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue"
+                    className="transition duration-300 border border-mpblue text-mpblue py-1 px-3  hover:text-white hover:bg-mpblue"
                 >
                     Create Player
                 </button>
@@ -180,12 +213,25 @@ export default function Players() {
                 <div className="justify-between mb-3 sm:flex">
                     <Title>Players</Title>
 
-                    <div className="flex items-center mb-6 sm:mb-0 ">
-                        <p className="text-sm mr-2 mt-1">Season:</p>
-                        <div className="w-full sm:w-48">
-                            <Select disabled options={optionsExample} onChange={e => setSelectedSeason(e)} value={selectedSeason} />
+                    <div className="flex items-center space-x-8">
+
+
+                        <div className="flex items-center mb-6 sm:mb-0 ">
+                            <p className="text-sm mr-2 mt-1">Age Group:</p>
+                            <div className="w-full sm:w-48">
+                                <Select options={levels} onChange={e => setLevel(e)} value={level} />
+                            </div>
+                        </div>
+
+
+                        <div className="flex items-center mb-6 sm:mb-0 ">
+                            <p className="text-sm mr-2 mt-1">Season:</p>
+                            <div className="w-full sm:w-48">
+                                <Select disabled options={optionsExample} onChange={e => setSelectedSeason(e)} value={selectedSeason} />
+                            </div>
                         </div>
                     </div>
+
 
                 </div>
 

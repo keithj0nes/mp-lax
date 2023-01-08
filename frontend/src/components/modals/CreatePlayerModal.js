@@ -43,12 +43,12 @@ const validations = {
             message: `Year must be between ${validFromYear} and ${validToYear}`,
         },
     },
-    player_number: {
-        required: {
-            value: true,
-            message: 'Player number is required',
-        },
-    },
+    // player_number: {
+    //     required: {
+    //         value: true,
+    //         message: 'Player number is required',
+    //     },
+    // },
 };
 
 const CreatePlayerModal = ({ closeModal }) => {

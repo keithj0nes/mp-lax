@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable react/no-unstable-nested-components */
 // TODO: fix this error above
 import React, { useState } from 'react';
@@ -12,7 +13,7 @@ import { variableStringFormatter } from '../helpers';
 // TODO: possibly use this package for hover header issues
 // yarn add @react-aria/interactions
 
-const Table = ({ headers, columns, body, uniqueKey, title, disableSort, empty }) => {
+const Table = ({ headers, columns, body, uniqueKey, title, disableSort, empty, editFields, inputOnChange }) => {
     const [sortBy, setSortBy] = useState(headers.find(h => h.default)?.sort || null);
     const [sortDir, setSortDir] = useState('asc');
 
@@ -56,22 +57,17 @@ const Table = ({ headers, columns, body, uniqueKey, title, disableSort, empty })
                     data-tip
                     data-for={label}
                     onClick={() => !!sort && !disableSort && applySort(sort)}
-                    className={classnames(
-                        'font-semibold text-left relative block',
-                        {
-                            'hover:underline cursor-pointer': !!sort && !disableSort,
-                        },
-                    )}
+                    className={classnames('font-semibold text-left relative block', {
+                        'hover:underline cursor-pointer': !!sort && !disableSort,
+                    })}
                 >
                     {label}
 
-                    <ArrowDownIcon className={classnames(
-                        'inline h-3 mx-1 absolute top-px text-indigo-500',
-                        {
+                    <ArrowDownIcon
+                        className={classnames('inline h-3 mx-1 absolute top-px text-indigo-500', {
                             'invisible': !isSortable || !active,
                             'rotate-180': sortDir === 'desc',
-                        },
-                    )}
+                        })}
                     />
                 </span>
                 {alt && (
@@ -122,27 +118,61 @@ const Table = ({ headers, columns, body, uniqueKey, title, disableSort, empty })
             return ind + 1;
         case 'math': {
             const formatted = variableStringFormatter(value.format, item).replace(/\s/g, '');
+
+            // console.log(formatted, 'formatted');
             const splitOnOperators = formatted.match(/[^\d()]+|[\d.]+/g);
-            const [num1, op, num2] = splitOnOperators;
+            // console.log(splitOnOperators, 'splitOnOperators');
+            // const [num1, op, num2] = splitOnOperators;
             // console.log(num1, op, num2, 'num1, op, num2')
-            let answer;
-            switch (op) {
-            case '*':
-                answer = num1 * num2;
-                break;
-            case '/':
-                answer = num1 / num2;
-                break;
-            case '+':
-                answer = parseInt(num1) + parseInt(num2);
-                break;
-            case '-':
-                answer = num1 - num2;
-                break;
-            default:
-                break;
+            // let answer = 0;
+            // switch (op) {
+            // case '*':
+            //     answer = num1 * num2;
+            //     break;
+            // case '/':
+            //     answer = num1 / num2;
+            //     break;
+            // case '+':
+            //     answer = parseInt(num1) + parseInt(num2);
+            //     break;
+            // case '-':
+            //     answer = num1 - num2;
+            //     break;
+            // default:
+            //     break;
+            // }
+
+            // this function takes a dynamic value and evaluates it from left to right
+            // example:
+            // sog_percent: {
+            //     type: 'math',
+            //     format: '$goals / $sog * 100',
+            //     fixed: '1',
+            // },
+
+            let answer = 0;
+
+            const math_it_up = {
+                '+': (x, y) => x + y,
+                '-': (x, y) => x - y,
+                '/': (x, y) => x / y,
+                '*': (x, y) => x * y,
+            };
+
+            for (let i = 0; i < splitOnOperators.length; i += 1) {
+                const isNumber = !isNaN(splitOnOperators[i]);
+                if (isNumber) {
+                    answer += parseInt(splitOnOperators[i]);
+                } else {
+                    // console.log(typeof answer, answer, splitOnOperators[i], parseInt(splitOnOperators[i + 1]), '= num, stuff[i + 1]');
+                    answer = math_it_up[splitOnOperators[i]](answer, parseInt(splitOnOperators[i + 1]));
+                    i += 1;
+                }
             }
-            return answer;
+            if (Math.abs(answer) === Infinity) {
+                return (0).toFixed(value.fixed || 0);
+            }
+            return (answer || 0).toFixed(value.fixed || 0);
         }
         case 'boolean': {
             // if (value.hasOwnProperty('trueValue') && value.hasOwnProperty('falseValue')) {
@@ -213,13 +243,23 @@ const Table = ({ headers, columns, body, uniqueKey, title, disableSort, empty })
                             {bodyCopy.map((item, ind) => (
                                 <tr key={uniqueKey ? item[uniqueKey] : item.id} className="hover:bg-gray-50">
                                     {Object.entries(columns).map(([colKey, colValue]) => {
-                                        // console.log(colKey, colValue, 'COL')
+                                        // console.log(colKey, colValue, item, 'COL')
                                         let formattedRow;
                                         if (typeof colValue === 'object') {
                                             formattedRow = switchType(colValue.type, colValue, item[colKey], item, ind);
                                             return (
                                                 <td className={`p-2 ${colValue.className || ''}`} key={colKey}>{formattedRow}</td>
                                             );
+                                        }
+
+                                        if (!!editFields) {
+                                            if (editFields[colKey] === 'number') {
+                                                return (
+                                                    <td className="p-2" key={colKey}>
+                                                        <input type="number" data-player-stats={`${item.player_id}-${colKey}`} min={0} onChange={inputOnChange} defaultValue={item[colKey]} className="w-16 rounded form-input border border-gray-300 pl-2 text-gray-500 hover:text-gray-600 font-medium hover:border-gray-400 focus:border-gray-400" />
+                                                    </td>
+                                                );
+                                            }
                                         }
 
                                         formattedRow = switchType(colValue, item[colKey], null, null, ind);

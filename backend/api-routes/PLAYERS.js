@@ -1,4 +1,4 @@
-const { getPlayers, createPlayer, getPlayerById, updatePlayer } = require('../controllers/players');
+const { getPlayers, getAllPlayers, createPlayer, getPlayerById, updatePlayer } = require('../controllers/players');
 
 const controller = (cb) => (process.argv[2] === 'showTable' ? cb.name : cb);
 
@@ -8,6 +8,11 @@ module.exports = {
         path: '/api/players/',
         controller: controller(getPlayers),
         // query: { page: 'number', dir: 'asc | desc' },
+    },
+    GET_ALL_PLAYERS: {
+        method: 'GET',
+        path: '/api/players-all',
+        controller: controller(getAllPlayers),
     },
     GET_PLAYER_BY_ID: {
         method: 'GET',

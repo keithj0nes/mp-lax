@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { format, parseISO } from 'date-fns';
 import { getGameById, clearGameByIdR } from '../redux/slices/gamesSlice';
 import { Table, Title, Loader, QuickAddPlayersToGame, EditGame } from '../components';
-
+import { MyModal } from '../components/Modal';
 
 const GAME = {
     opponent: 'Alpharetta HS',
@@ -44,18 +45,13 @@ const GAME = {
 // save percentage calc = saves / shots on goal
 const Game = () => {
     const [isEditing, setIsEditing] = useState(false);
-    // const [showEditPlayerStatsModal, setShowEditPlayerStatsModal] = useState(false);
-    // const [showAddPlayerStatsModal, setShowAddPlayerStatsModal] = useState(false);
-    // const [selectedPlayer, setSelectedPlayer] = useState(null);
-    // const [checkedPlayersInGame, setCheckedPlayersInGame] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch();
     const params = useParams();
 
-    // const { game } = useSelector(state => state.games);
-
     const { game, singleGameLoading } = useSelector(state => ({ ...state.games, ...state.players }));
 
-    console.log(game, ' SINGGLE GAMEE =====');
+    // console.log(game, ' SINGGLE GAMEE =====');
 
     // console.log(singleGameLoading, 'singleGameLoading')
 
@@ -67,13 +63,9 @@ const Game = () => {
         };
     }, [dispatch, params.game_id]);
 
-    // const { goalie_stats } = GAME;
-
     const goalie_stats = GAME.goalie_stats.map(item => ({ ...item, name: `${item.first_name} ${item.last_name}` }));
 
-    const { has_been_played, opponent, location, start_date, player_stats } = game;
-
-
+    const { has_been_played, opponent_name, location_name, start_date, player_stats } = game;
     const usScores = Object.keys(game).filter(ele => ele.startsWith('us_') && ele.includes('_scores_') && !ele.includes('_scores_overtime'));
     const opponentScores = Object.keys(game).filter(ele => ele.startsWith('opponent_') && ele.includes('_scores_') && !ele.includes('_scores_overtime'));
 
@@ -83,7 +75,8 @@ const Game = () => {
         { label: 'G', sort: 'goals' },
         { label: 'A', sort: 'assists' },
         { label: 'PTS' }, // TODO: took sort by points off until fix error (below)
-        { label: 'Shots', sort: 'sog' },
+        { label: 'Shts', sort: 'sog' },
+        { label: 'Shts%' }, // TODO: took sort by sog_percent off until fix error (below)
         { label: 'GB', sort: 'ground_balls' },
         { label: 'PIMs', sort: 'penalties_in_minutes' },
         // { label: 'PTS', sort: 'points' },
@@ -107,10 +100,14 @@ const Game = () => {
             format: '$goals + $assists',
         },
         sog: 'number',
+        sog_percent: {
+            type: 'math',
+            format: '$goals / $sog * 100',
+            fixed: '1',
+        },
         ground_balls: 'number',
         penalties_in_minutes: 'number',
     };
-
 
     const goalieHeaders = [
         { label: '#', className: 'whitespace-nowrap w-0', default: true },
@@ -122,7 +119,6 @@ const Game = () => {
         { label: 'GA%' },
         { label: 'Min' },
     ];
-
 
     const goalieColumns = {
         player_number: 'number',
@@ -141,20 +137,6 @@ const Game = () => {
         minutes: 'number',
     };
 
-    // const handleCheckboxChange = player => {
-    //     const checkedPlayersInGameCopy = [...checkedPlayersInGame];
-    //     const index = checkedPlayersInGameCopy.findIndex(item => item.player_id === player.player_id)
-    //     if (index === -1) {
-    //         checkedPlayersInGameCopy.push(player)
-    //     } else {
-    //         checkedPlayersInGameCopy.splice(index , 1)
-    //     }
-    //     setCheckedPlayersInGame(checkedPlayersInGameCopy)
-    // };
-
-    // console.log(player_stats, 'player_stats')
-    // console.log(players, 'pLAAYERZZZ ==22')
-
     const renderWhenEditing = () => {
         if (isEditing && !player_stats?.length) {
             return <QuickAddPlayersToGame setIsEditing={setIsEditing} isEditing={isEditing} />;
@@ -166,15 +148,36 @@ const Game = () => {
     };
 
     return (
-        <main className="py-6">
+        <main className="single-game-container py-6">
+            <Helmet>
+                <title>{`MP Boys Lax | VS ${opponent_name}`}</title>
+            </Helmet>
             <Loader loading={singleGameLoading} />
 
-            <div className="flex justify-end">
+            <MyModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+                <div className="max-w-md w-full">
+                    <div className="p-4">
+                        Exporting Game
+                        <div className="flex justify-center">
+                            <Loader loading fullScreen={false} />
+                        </div>
+                    </div>
+                </div>
+            </MyModal>
+
+            <div className="flex justify-between items-center mb-4">
+
+                <button type="button" className="flex items-center text-mpblue" onClick={() => setIsOpen(true)}>
+                    <svg className="w-6 h-6 mr-2 text-mpblue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    Export Game
+                </button>
+
+
                 <button
                     type="button"
                     onClick={() => setIsEditing(!isEditing)}
                     // className="transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue"
-                    className={classNames('transition duration-300 border border-mpblue text-mpblue py-1 px-3 mb-4  hover:text-white hover:bg-mpblue', {
+                    className={classNames('transition duration-300 border border-mpblue text-mpblue py-1 px-3 hover:text-white hover:bg-mpblue', {
                         'hidden': isEditing,
                     })}
                 >
@@ -187,7 +190,7 @@ const Game = () => {
                     type="button"
                     onClick={() => setIsEditing(false)}
                     // className="transition duration-300 text-mpblue py-1 px-3 mb-4 hover:text-mpblue hover:bg-transparent"
-                    className={classNames('transition duration-300 text-mpblue py-1 px-3 mb-4 hover:text-mpblue hover:bg-transparent', {
+                    className={classNames('transition duration-300 text-mpblue py-1 px-3 hover:text-mpblue hover:bg-transparent', {
                         'hidden': !isEditing,
                     })}
                 >
@@ -202,12 +205,9 @@ const Game = () => {
                     <div className="bg-white p-3 sm:p-6 mb-3 sm:mb-6 sm:flex flex-wrap items-center justify-between shadow-sm">
 
                         <div className="pb-6 md:pb-0 text-center">
-                            <h3 className="text-3xl">{opponent}</h3>
-                            <h4 className="text-sm">{location}</h4>
-                            {/* <h4 className="text-sm">{start_date}</h4> */}
+                            <h3 className="text-3xl">{opponent_name}</h3>
+                            <h4 className="text-sm">{location_name}</h4>
                             <h4 className="text-sm">{start_date && format(parseISO(start_date), 'PPPP @ pp')}</h4>
-
-
                         </div>
 
                         {has_been_played && (
@@ -231,7 +231,7 @@ const Game = () => {
                                             <td className="px-3 md:px-6 py-1 border border-gray-200">{game.goals_for}</td>
                                         </tr>
                                         <tr>
-                                            <td className="pr-4 whitespace-nowrap">{opponent}</td>
+                                            <td className="pr-4 whitespace-nowrap">{opponent_name}</td>
                                             {opponentScores.map((score) => <td key={score} className="px-3 md:px-6 py-1 border border-gray-200">{game[score]}</td>)}
                                             <td className="px-3 md:px-6 py-1 border border-gray-200">{game.goals_against}</td>
                                         </tr>
@@ -265,10 +265,6 @@ const Game = () => {
                                     <tbody>
                                         <tr className="border-b border-mpred">
                                             <td className="md:pr-4 whitespace-nowrap w-full border-r border-mpred md:w-auto">Patriots</td>
-                                            {/* {Object.keys(team_stats).map(item => {
-                                                return <td key={item} className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{team_stats[item].us}</td>
-                                            })} */}
-
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_goals_for}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_ground_balls}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_shots}</td>
@@ -276,11 +272,7 @@ const Game = () => {
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.us_penalties_in_minutes}</td>
                                         </tr>
                                         <tr>
-                                            <td className="pr-1 md:pr-4 whitespace-nowrap w-full border-r border-mpred md:w-auto">{opponent}</td>
-                                            {/* {Object.keys(team_stats).map(item => {
-                                                return <td key={item} className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{team_stats[item].opponent}</td>
-                                            })} */}
-
+                                            <td className="pr-1 md:pr-4 whitespace-nowrap w-full border-r border-mpred md:w-auto">{opponent_name}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.opponent_goals_for}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.opponent_ground_balls}</td>
                                             <td className="px-2 py-1 text-lg font-bold text-mpblue sm:px-6 sm:text-3xl">{game.opponent_shots}</td>
@@ -311,6 +303,11 @@ const Game = () => {
                                     empty="No goalie stats available"
                                 />
                             </div>
+
+                            <div className="bg-white p-3 sm:p-6 mb-6 shadow-sm overflow-scroll">
+                                <Title>Game Notes</Title>
+                                <p>{game.notes}</p>
+                            </div>
                         </>
                     )}
                 </>
@@ -320,29 +317,3 @@ const Game = () => {
 };
 
 export default Game;
-
-
-// TODO: figure out for mobile later
-// <table className="m-auto md:m-0">
-//     <thead>
-//         <tr>
-//             <th className="pr-4 border-b border-gray-200 whitespace-nowrap"></th>
-//             <th className="pr-4 border-b border-gray-200 whitespace-nowrap">Patriots</th>
-//             <th className="pr-4 border-b border-gray-200 whitespace-nowrap">{opponent}</th>
-//         </tr>
-//     </thead>
-//     <tbody>
-//         <tr>
-//             <td className="pr-4 whitespace-nowrap">1</td>
-//         </tr>
-//         <tr>
-//             <td className="pr-4 whitespace-nowrap">2</td>
-//         </tr>
-//         <tr>
-//             <td className="pr-4 whitespace-nowrap">3</td>
-//         </tr>
-//         <tr>
-//             <td className="pr-4 whitespace-nowrap">4</td>
-//         </tr>
-//     </tbody>
-// </table>

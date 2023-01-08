@@ -17,10 +17,10 @@ export default function useForm(initialState = {}) {
         // }
 
         if (nameManual) {
-            // return console.log(nameManual, key);
+            // console.log(nameManual, key, key.toString());
             setFields({
                 ...fields,
-                [nameManual]: key.toString(),
+                [nameManual]: typeof key === 'boolean' ? key : key.toString(),
             });
             return;
         }

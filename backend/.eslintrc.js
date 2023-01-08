@@ -14,7 +14,7 @@ module.exports = {
         ecmaVersion: 'latest',
     },
     rules: {
-        'indent': ['error', 4],
+        'indent': ['error', 4, { 'SwitchCase': 1 }],
         'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
         'jsx-a11y/no-static-element-interactions': 'off',
         'jsx-a11y/click-events-have-key-events': 'off',

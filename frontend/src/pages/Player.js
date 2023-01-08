@@ -1,10 +1,11 @@
 /* eslint-disable no-restricted-syntax */
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
-import { EditPlayer, Table, Title } from '../components';
+import { EditPlayer, Table } from '../components';
 import { getPlayerById, clearPlayerByIdR } from '../redux/slices/playersSlice';
 import { getGrade } from '../helpers';
 
@@ -98,7 +99,7 @@ const Player = () => {
         opponent: {
             type: 'link',
             format: '/games/$game_id',
-            as: '$opponent',
+            as: '$name',
             className: 'whitespace-nowrap',
         },
         goals: 'number',
@@ -123,7 +124,7 @@ const Player = () => {
         const totalsReduced = arr.reduce((acc, curr) => {
             const accCopy = { ...acc };
             for (const [key] of Object.entries(acc)) {
-                accCopy[key] += curr[key];
+                accCopy[key] += parseInt(curr[key]);
             }
             return { ...acc, ...accCopy };
         }, initialValue);
@@ -134,8 +135,12 @@ const Player = () => {
     // console.log(getTotals(current, currentSeasonKeys));
     // console.log(getTotals(player?.seasons, allSeasonKeys));
 
+
     return (
         <main className="py-6">
+            <Helmet>
+                <title>{`MP Boys Lax | ${player.first_name} ${player.last_name}`}</title>
+            </Helmet>
 
             {/* <div className="bg-red-100 p-4 text-center rounded mb-4">
                 Page under construction
@@ -222,7 +227,7 @@ const Player = () => {
                             columns={currentSeasonColumns2}
                             // body={current || []}
                             body={(current && [...current, { start_date: 'Total', ...getTotals(current, currentSeasonKeys) }]) || []}
-                            title="Current Season NEW"
+                            title="Current Season"
                             uniqueKey="game_id"
                         />
                     </div>
@@ -234,7 +239,7 @@ const Player = () => {
                             // body={player?.seasons || []}
                             // body={player?.seasons || []}
                             body={(player?.seasons && [...player.seasons, { name: 'Total', ...getTotals(player?.seasons, allSeasonKeys) }]) || []}
-                            title="All Seasons NEW"
+                            title="All Seasons"
                             uniqueKey="season_id"
                         />
                     </div>

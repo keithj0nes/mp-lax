@@ -19,20 +19,6 @@ app.use((req, res, next) => {
 });
 
 
-// const dbUriSplit = process.env.DB_URI.split(/[:/@]+/);
-// const b = {
-//     user: dbUriSplit[1],
-//     password: dbUriSplit[2],
-//     host: dbUriSplit[3],
-//     port: dbUriSplit[4],
-//     database: dbUriSplit[5],
-//     ssl: false,
-//     poolSize: 2,
-// };
-//
-// console.log(b, 'b')
-
-
 let connectionInfo;
 if (process.env.NODE_ENV === 'production') {
     const dbUriSplit = process.env.DB_URI.split(/[:/@]+/);
@@ -50,64 +36,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-// error with prod
-// console.logs are not showing in heroku
-// neither established nor failed is showing
-
-
-// might be something with engine type? which was removed from package json
-
-// console.log(connectionInfo, 'con info');
-
-
-massive(connectionInfo, { excludeMatViews: true }).then(instance => {
+massive(connectionInfo, { excludeMatViews: true, scripts: `${__dirname}/database/scripts` }).then(instance => {
     console.log('Database - connection established');
     app.set('db', instance); // add your connection to express
 }).catch(err => console.log('Database - connection failed \n', err));
-
-// try {
-//     const db = await massive(connectionInfo);
-//     app.set('db', db);
-//     console.log('Database - connection established');
-// } catch (error) {
-//     console.log('Database - connection failed \n', error);
-// }
-
-// (async () => {
-//     console.log('Database - initializing connection...');
-
-//     try {
-//         console.log('trying here')
-//         const db = await massive(connectionInfo);
-//         console.log('trying here 22222')
-
-//         app.set('db', db);
-//         console.log('Database - connection established');
-//     } catch (e) {
-//         console.log('Database - connection failed \n', e);
-//     }
-// })();
-
-// commit and push this to test!
-
-// (async () => {
-//     console.log('Starting try catch');
-
-//     try {
-//         console.log('throwing error here')
-//         throw new Error('intentionally throwing error');
-//     } catch (e) {
-//         console.log('heres my error!', e);
-//     }
-// })();
-
-
-// module.exports = function() {
-//     console.log(app, 'appppppp')
-//     // app.set('port', 3000);
-//     return app;
-// };
-
 
 // ROUTES //
 
@@ -123,9 +55,13 @@ app.put(api.UPDATE_SEASON.path, api.UPDATE_SEASON.controller);
 
 // Players
 app.get(api.GET_PLAYERS.path, api.GET_PLAYERS.controller);
+app.get(api.GET_ALL_PLAYERS.path, api.GET_ALL_PLAYERS.controller);
 app.get(api.GET_PLAYER_BY_ID.path, api.GET_PLAYER_BY_ID.controller);
 app.post(api.CREATE_PLAYER.path, api.CREATE_PLAYER.controller);
 app.put(api.UPDATE_PLAYER.path, api.UPDATE_PLAYER.controller);
+
+// MISC
+app.get(api.GET_MISC.path, api.GET_MISC.controller);
 
 
 // Games

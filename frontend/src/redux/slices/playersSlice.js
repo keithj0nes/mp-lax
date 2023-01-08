@@ -2,6 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { request } from '../../request';
 
 const initialState = {
+    playersMasterList: [],
+    playersMasterList2: [],
+
     players: [],
     player: {},
 };
@@ -12,6 +15,13 @@ export const playersSlice = createSlice({
     reducers: {
         getPlayersR: (state, action) => {
             state.players = action.payload;
+        },
+        getAllPlayersR: (state, action) => {
+            state.playersMasterList = action.payload;
+        },
+        getPlayersRR: (state, action) => {
+            console.log(action, 'actionnn')
+            state.playersMasterList2 = action.payload;
         },
         getPlayerR: (state, action) => {
             state.player = action.payload;
@@ -29,17 +39,48 @@ export const playersSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { getPlayersR, getPlayerR, createPlayerR, clearPlayerByIdR, updatePlayerR } = playersSlice.actions;
+export const { getPlayersR, getAllPlayersR, getPlayerR, createPlayerR, clearPlayerByIdR, updatePlayerR, getPlayersRR } = playersSlice.actions;
 export default playersSlice.reducer;
 
 
-export const getAllPlayers = () => async (dispatch) => {
+export const getPlayers = () => async (dispatch) => {
     try {
         const data = await request({ url: '/api/players', method: 'GET' });
         // console.log(data, 'daattaaa')
-        if (!data) return alert('error in getAllPlayers');
+        if (!data) return alert('error in getPlayers');
         //   const response = await axios.get(`${API_URL}/${data}`);
         dispatch(getPlayersR(data.data));
+        return true;
+    } catch (err) {
+        throw new Error(err);
+    }
+};
+
+export const getAllPlayers = () => async (dispatch) => {
+    try {
+        const data = await request({ url: '/api/players-all', method: 'GET' });
+        // console.log(data, 'daattaaa')
+        if (!data) return alert('error in getAllPlayers');
+        //   const response = await axios.get(`${API_URL}/${data}`);
+        dispatch(getAllPlayersR(data.data));
+
+
+
+
+
+
+        
+
+        // TODO: players-all should return data as data.data and not newQuery
+
+
+
+
+
+
+
+
+        dispatch(getPlayersRR(data.newQuery));
         return true;
     } catch (err) {
         throw new Error(err);

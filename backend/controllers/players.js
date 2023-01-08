@@ -28,6 +28,36 @@ const getPlayers = async (req, res) => {
     return res.send({ status: 200, data: playersLookup, message: 'Retrieved list of players' });
 };
 
+const getAllPlayers = async (req, res) => {
+    const db = req.app.get('db');
+
+    const allPlayersLookup = await db.players.find({}, {
+        order: [{
+            field: 'graduation_year',
+            direction: 'asc',
+        }],
+    });
+
+    console.log(allPlayersLookup, 'allPlayersLookup')
+
+    const q = `
+        SELECT p.player_id AS player_id, p.first_name AS first_name,
+            '[' || STRING_AGG('{ "name": "' || s.name || '", "id":' || s.id || 
+            '}', ', ') || ']' AS seasons
+        FROM players p
+        LEFT JOIN player_season_stats pss ON pss.player_id = p.player_id
+        LEFT JOIN seasons s ON s.id = pss.season_id
+        GROUP BY p.player_id, p.first_name
+        ORDER BY p.player_id;
+    `;
+
+    const newQuery = await db.query(q);
+
+    console.log(newQuery, 'NEW AUERY!!')
+
+    return res.send({ status: 200, data: allPlayersLookup, newQuery, message: 'Retrieved list of all players' });
+};
+
 const createPlayer = async (req, res) => {
     const db = req.app.get('db');
     const { first_name, last_name, graduation_year, player_number, add_to_current_season } = req.body;
@@ -66,6 +96,8 @@ const getPlayerById = async (req, res) => {
     // const { season_id } = req.body;
     const [currentSeason] = await _getSeasons(db);
 
+    console.log(currentSeason, 'currentSeason')
+
     // get player details
     const playerLookup = await db.players.findOne(
         { player_id },
@@ -79,15 +111,24 @@ const getPlayerById = async (req, res) => {
         return res.send({ status: 404, data: [], message: 'Player does not exist' });
     }
 
+    console.log(player_id, currentSeason.id, 'player_id, currentSeason.id')
 
     // get player games details for current season
     // const arr = ['*'];
     const arr = ['g.game_id', 'g.start_date', 'g.opponent', 'gps.goals', 'gps.assists', 'gps.sog', 'gps.ground_balls', 'gps.interceptions', 'gps.takeaways', 'gps.unforced_errors', 'gps.penalties', 'gps.penalties_in_minutes'];
+    // const currentSeasonStatsQuery = `
+    //     select ${arr.join(', ')} from game_player_stats gps
+    //     join players p on p.player_id = gps.player_id
+    //     join seasons s on s.id = gps.season_id
+    //     join games g on g.game_id = gps.game_id
+    //     where gps.player_id = $1 and gps.season_id = $2
+    // `;
     const currentSeasonStatsQuery = `
-        select ${arr.join(', ')} from game_player_stats gps
+        select g.game_id, g.start_date, t.name, gps.goals, gps.assists, gps.sog, gps.ground_balls, gps.interceptions, gps.takeaways, gps.unforced_errors, gps.penalties, gps.penalties_in_minutes from game_player_stats gps
         join players p on p.player_id = gps.player_id
         join seasons s on s.id = gps.season_id
         join games g on g.game_id = gps.game_id
+        join teams t on t.id = g.opponent_id
         where gps.player_id = $1 and gps.season_id = $2
     `;
     const playerGamesLookup = await db.query(currentSeasonStatsQuery, [player_id, currentSeason.id]);
@@ -138,6 +179,7 @@ const updatePlayer = async (req, res) => {
 
 module.exports = {
     getPlayers,
+    getAllPlayers,
     createPlayer,
     getPlayerById,
     updatePlayer,

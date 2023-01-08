@@ -67,7 +67,7 @@ export const getAllGames = (query) => async (dispatch) => {
     try {
         const data = await request({ url: `/api/games?${query || ''}`, method: 'GET' });
         console.log(data, 'daattaaa');
-        if (!data) return alert('error in getAllPlayers');
+        if (!data) return alert('error in getAllGames');
         //   const response = await axios.get(`${API_URL}/${data}`);
         dispatch(getGamesR(data.data));
         return true;

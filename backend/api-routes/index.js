@@ -2,12 +2,14 @@ const auth = require('./AUTH');
 const seasons = require('./SEASONS');
 const players = require('./PLAYERS');
 const games = require('./GAMES');
+const misc = require('./MISC');
 
 const routesWithParentKeys = {
     seasons,
     auth,
     players,
     games,
+    misc,
 };
 
 const allRoutes = Object.values(routesWithParentKeys).reduce((acc, curr) => ({ ...acc, ...curr }), {});

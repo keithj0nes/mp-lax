@@ -11,13 +11,23 @@ const _getGameById = async (db, game_id) => {
     if (!gameLookup) {
         return false;
     }
-    const gameStats = await db.game_team_stats.findOne({ game_id });
+
+    const gameStatsQuery = `
+        select *, g.game_id as game_id, l.name as location_name, t.name as opponent_name from games g
+        left join game_team_stats gts on gts.game_id = g.game_id
+        join teams t on t.id = g.opponent_id
+        join locations l on l.id = g.location_id 
+        where g.game_id = $1;
+    `;
+
     const query = `
         select * from game_player_stats gps
         join players p on p.player_id = gps.player_id
         where gps.game_id = $1 and gps.season_id = $2
     `;
     const playersLookup = await db.query(query, [game_id, gameLookup.season_id]);
+    const [gameStats] = await db.query(gameStatsQuery, [game_id]);
+
     return { ...gameLookup, ...gameStats, player_stats: playersLookup };
 };
 
@@ -39,27 +49,13 @@ const getGames = async (req, res) => {
         }
     }
 
-    // const playersLookup = await db.players.find({}, { fields: ['player_id', 'first_name'] });
-    const gamesLookup = await db.games.find({
-        season_id: selected_season || currentSeason.id,
-    }, {
-        order: [{
-            field: 'start_date',
-            direction: 'asc',
-        }],
-    });
-
-    // const query = `
-    //     select * from players p
-    //     join player_season_stats pss on pss.player_id = p.player_id
-    //     join seasons s on s.id = pss.season_id
-    //     where season_id = $1
-    // `;
-
-    // const gamesLookup = await db.query(query, [10001]);
-
-    // console.log(gamesLookup, 'gamesLookup');
-
+    const gamesLookupQuery = `
+        select g.game_id, g.season_id, g.opponent_id, g.result, g.is_home, g.start_date, g.has_been_played, g.goals_for, g.goals_against, g.goal_differential, t.name from games g
+        join teams t on t.id = g.opponent_id
+        where season_id = $1
+        order by start_date asc
+    `;
+    const gamesLookup = await db.query(gamesLookupQuery, [selected_season || currentSeason.id]);
 
     return res.send({ status: 200, data: gamesLookup, message: 'Retrieved list of games' });
 };
@@ -68,29 +64,6 @@ const getGames = async (req, res) => {
 const getGameById = async (req, res) => {
     const db = req.app.get('db');
     const { game_id } = req.params;
-    // const { season_id } = req.body;
-    // const playersLookup = await db.players.find({}, { fields: ['player_id', 'first_name'] });
-    // const gameLookup = await db.games.findOne({ game_id });
-
-    // console.log(gameLookup, 'gameLookup');
-
-    // if (!gameLookup) {
-    //     return res.send({ status: 404, data: [], message: 'Game does not exist' });
-    // }
-
-    // const bb = await db.game_team_stats.findOne({ game_id });
-
-
-    // const query = `
-    //     select * from game_player_stats gps
-    //     join players p on p.player_id = gps.player_id
-    //     where gps.game_id = $1 and gps.season_id = $2
-    // `;
-
-    // const playersLookup = await db.query(query, [game_id, gameLookup.season_id]);
-
-    // console.log(playersLookup, 'playersLookup')
-
     const data = await _getGameById(db, game_id);
 
     if (data === false) {
@@ -102,25 +75,42 @@ const getGameById = async (req, res) => {
 
 const createGame = async (req, res) => {
     const db = req.app.get('db');
-    const { opponent, start_date, is_home, location } = req.body;
+    const { start_date, is_home, opponent_id, location_id } = req.body;
     // TODO: update query to account for if season_id is passed from frontend
     const [currentSeason] = await _getSeasons(db);
-    const gameId = customAlphabet('1234567890', 6)();
 
-    const data = await db.games.insert({ game_id: parseInt(gameId), season_id: currentSeason.id, opponent, location, start_date, is_home });
-    await db.game_team_stats.insert({ game_id: parseInt(gameId), season_id: currentSeason.id });
+    // get team id
+    const teamLookup = await db.teams.findOne({ id: opponent_id });
+    if (!teamLookup) {
+        return res.send({ status: 404, data: [], message: 'Opponent not found' });
+    }
+
+    // get location id
+    const locationLookup = await db.locations.findOne({ id: location_id });
+    if (!locationLookup) {
+        return res.send({ status: 404, data: [], message: 'Location not found' });
+    }
+
+    // const data = await db.games.insert({ game_id: parseInt(gameId), season_id: currentSeason.id, opponent, location, start_date, is_home });
+    // await db.game_team_stats.insert({ game_id: parseInt(gameId), season_id: currentSeason.id });
+
+    const data = await db.games.insert({ season_id: currentSeason.id, opponent_id, location_id, start_date, is_home });
+    await db.game_team_stats.insert({ game_id: data.game_id, season_id: currentSeason.id });
     return res.send({ status: 200, data, message: 'Game created' });
 };
 
 const updateGame = async (req, res) => {
     const db = req.app.get('db');
 
+    console.log(req.body, 'BODY');
+
     const { game_id } = req.params;
     const {
-        opponent,
-        location,
+        opponent_id,
+        location_id,
         start_date,
         is_home,
+        notes,
         opponent_faceoffs_won,
         opponent_goals_against,
         opponent_ground_balls,
@@ -136,7 +126,9 @@ const updateGame = async (req, res) => {
         us_scores_third,
         us_scores_fourth,
         us_scores_overtime,
+        playerStats,
     } = req.body;
+
 
     const opponentGoalsFor = opponent_scores_first + opponent_scores_second + opponent_scores_third + opponent_scores_fourth + opponent_scores_overtime;
     const usGoalsFor = us_scores_first + us_scores_second + us_scores_third + us_scores_fourth + us_scores_overtime;
@@ -153,15 +145,23 @@ const updateGame = async (req, res) => {
     }
 
 
-    // console.log(goalDifferential, 'goalDifferential')
-    // console.log(result, 'bbbbbbb')
+    // TODO: need to total player stats to add to game_team_stats below
+
+
+    await Promise.all(Object.keys(playerStats).map(async player_id => {
+        console.log(player_id, playerStats[player_id], 'hiiiii');
+        const data = await db.game_player_stats.update({ player_id, game_id }, { ...playerStats[player_id] });
+        console.log(data, 'DATA IN PLAYER UPDATE');
+    }));
+
 
     const [d] = await db.games.update({ game_id }, {
-        opponent,
-        location,
+        opponent_id,
+        location_id,
         start_date,
         is_home,
         result,
+        notes,
         goal_differential: goalDifferential,
         goals_for: usGoalsFor,
         goals_against: opponentGoalsFor,
@@ -191,17 +191,9 @@ const updateGame = async (req, res) => {
 
     // console.log(d, 'ddddd')
 
-    const query = `
-        select * from game_player_stats gps
-        join players p on p.player_id = gps.player_id
-        where gps.game_id = $1 and gps.season_id = $2
-    `;
+    const game = await _getGameById(db, game_id);
 
-    const playersLookup = await db.query(query, [game_id, b.season_id]);
-
-    console.log(playersLookup, 'playersLookup update game');
-
-    return res.send({ status: 200, data: { ...d, ...b, player_stats: playersLookup }, message: 'Game updated', notification_type: 'snack' });
+    return res.send({ status: 200, data: game, message: 'Game updated', notification_type: 'snack' });
 };
 
 
@@ -290,7 +282,7 @@ const addPlayerGameStats = async (req, res) => {
 
     const updatedGame = await db.query(q2, [game_id, currentSeason.id]);
 
-    console.log(updatedGame,' updated game!!!')
+    console.log(updatedGame, ' updated game!!!');
 
     return res.send({ status: 200, data: { updatedGame, addedPlayer: { ...data, first_name, last_name } }, message: 'Player stats added to game' });
     // return res.send({ status: 200, data: { ...data, first_name, last_name }, message: 'Player stats added to game' });
@@ -433,7 +425,7 @@ const quickAddPlayersToGame = async (req, res) => {
     const [currentSeason] = await _getSeasons(db);
 
     await db.games.update({ game_id }, { has_been_played: true });
-    console.log('RIGHT BEFORE: promises')
+    console.log('RIGHT BEFORE: promises');
 
     const promises = players.map(async item => {
         await db.game_player_stats.insert({ game_id, player_id: item.player_id, player_number: item.player_number, season_id: currentSeason.id });
@@ -456,7 +448,9 @@ const quickAddPlayersToGame = async (req, res) => {
         // });
     });
 
-    console.log(promises, 'promises')
+    console.log(promises, 'promises');
+
+    await db.game_team_stats.insert({ game_id });
 
     const results = await Promise.all(promises);
     console.log(results, 'restultsss');
